@@ -26,6 +26,8 @@ font3 = pygame.font.Font("fonts/font.ttf", 25)
 mColor = (110, 69, 206)
 lvl = 1
 aliensKilled = 0
+nA = 4 #number of aliens every level; level 1: 4
+alienList = []
 
 #buttons
 playButton = pygame.image.load('assets/resume_button.png')
@@ -48,6 +50,7 @@ over_bg = pygame.image.load('assets/over_bg.png')
 #player and enemy
 p = pygame.image.load('assets/p.png')
 a = pygame.image.load('assets/aliens/a1.png')
+a2 = pygame.image.load('assets/aliens/a2.png')
 
 #bullet
 b = pygame.image.load('assets/bullet.png')
@@ -79,7 +82,7 @@ class Player(pygame.sprite.Sprite):
         if self.rate > 0:
             self.rate -= 1
 
-        collisionsAlien = pygame.sprite.spritecollide(self, alienGroup, False)
+        collisionsAlien = pygame.sprite.spritecollide(self, alienList, False)
         for i in collisionsAlien:      
             if self.lives != 0:  
                 self.lives -= 1
@@ -155,29 +158,38 @@ class Alien(pygame.sprite.Sprite):
     def __init__(self, x, y, location):
         pygame.sprite.Sprite.__init__(self)
         self.image = a
+        self.image2 = a2
         self.rect = self.image.get_rect()
+        self.rect2 = self.image.get_rect()
         self.rect.center = (x,y)
+        self.rect2.center = (x,y)
         self.location = location
         self.speed = 2
+        self.speed2 = 3
+        self.chance = random.randint(1,5)
 
     def move(self):
         self.rect.x -= self.speed
+        if self.chance == 2:
+            self.rect2.x -= self.speed2
 
     def update(self): 
         global aliensKilled 
+
         collisionsBullet = pygame.sprite.spritecollide(self, bulletGroup, False)
-        for k in collisionsBullet:    
-            print('1')  
+
+        for k in collisionsBullet:   
             self.kill()
+            alienList.remove(alien) 
             aliensKilled += 1
 
-alienGroup = pygame.sprite.Group()
+    def show(self):
+        window.blit(a, (self.rect.x, self.rect.y))
+        if self.chance == 2:
+            window.blit(a2, (self.rect2.x, self.rect2.y))
 
-nA = (aliensKilled+1)*2 #number of aliens corresponding to aliens killed
-alienList = []
 for j in range(nA):
-    alien = Alien(1200, (random.randint(70, 680)), 2)
-    alienGroup.add(alien)
+    alien = Alien(random.randint(1200, 1400), (random.randint(70, 680)), 3)
     alienList.append(alien)
 
 class Log(pygame.sprite.Sprite):
@@ -199,7 +211,7 @@ class Log(pygame.sprite.Sprite):
         self.pos = random.randint(70, 580) 
 
     def update(self):
-        pass
+        self.speed += lvl/4
 
     def moveLR(self):
         self.rect.x += self.speed
@@ -318,7 +330,15 @@ while True:
             menu(f"Fire Rate: ready", font3, mColor, 945, 745)
         else:
             menu(f"Fire Rate: {player.rate}", font3, mColor, 945, 745)
-        
+
+        if len(alienList) == 0:
+            lvl += 1
+            nA += 2
+            for j in range(nA):
+                alien = Alien(random.randint(1200, 1400), (random.randint(70, 680)), 2)
+                alienList.append(alien)
+            log.update()
+
         rockGroup.draw(window)
 
         bulletGroup.draw(window)
@@ -328,12 +348,15 @@ while True:
         log.moveLR()
         if log.rect2.x >= 1080 and log.rect.x >= 1080:
             log.moveRL()
-            print(log.rect.x, log.rect2.x)
-        #log.update()
+            #print(log.rect.x, log.rect2.x)
 
-        alienGroup.draw(window)
-        alienGroup.update()
-        alien.move()
+        for alien in alienList:
+            alien.show()
+            alien.update()
+            alien.move()
+            if alien.rect.x + alien.image.get_height() < 64: 
+                player.lives -= 1
+                alienList.remove(alien)
 
         player.update()
         player.show()
@@ -384,7 +407,7 @@ while True:
                 moveU = False
             if event.key == K_DOWN or event.key == K_s:
                 moveD = False
-
+    
     pygame.display.update()
     clock.tick(60)
 
