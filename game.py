@@ -153,6 +153,7 @@ class Player(pygame.sprite.Sprite):
     def shoot(self):
         if self.rate == 0:
             self.rate = 30
+            global bullet 
             bullet = Bullet(self.rect.centerx+(40*self.directionx), self.rect.centery+(5*self.directiony),self.directionx)
             bulletGroup.add(bullet)
 
@@ -188,6 +189,7 @@ class Alien(pygame.sprite.Sprite):
         for k in collisionsBullet:   
             self.kill()
             alienList.remove(alien) 
+            bulletGroup.remove(bullet)
             aliensKilled += 1
 
     def show(self):
