@@ -17,11 +17,18 @@ icon = pygame.image.load('assets/icon.png')
 pygame.display.set_icon(icon)
 pygame.display.set_caption("From Another Planet")
 
-font = pygame.font.Font("fonts/font.ttf", 60)
+#fonts C&C Red Alert [INET]
+menuFont = pygame.font.Font("fonts/font.ttf", 100)
+font = pygame.font.Font("fonts/font.ttf", 60) 
 font2 = pygame.font.Font("fonts/font.ttf", 30)
 font3 = pygame.font.Font("fonts/font.ttf", 25)
 
 mColor = (110, 69, 206)
+lvl = 1
+aliensKilled = 0
+
+#buttons
+playButton = pygame.image.load('assets/resume_button.png')
 
 resumeb = pygame.image.load('assets/resume_button.png').convert_alpha()
 resumeButton = buttons.Button(580, 380, resumeb, 1)
@@ -33,18 +40,26 @@ def menu(text, font, mColor, x, y):
     m = font.render(text, True, mColor)
     window.blit(m, (x,y))
 
+#backgrounds
 bg = pygame.image.load('assets/bg.png')
 menu_bg = pygame.image.load('assets/menu_bg.png')
 over_bg = pygame.image.load('assets/over_bg.png')
-p = pygame.image.load('assets/p.png')
-b = pygame.image.load('assets/bullet.png')
-rockList = []
 
+#player and enemy
+p = pygame.image.load('assets/p.png')
+a = pygame.image.load('assets/aliens/a1.png')
+
+#bullet
+b = pygame.image.load('assets/bullet.png')
+
+#laser/log
+l1 = pygame.image.load('assets/log1.png')
+l2 = pygame.image.load('assets/log2.png')
+
+rockRandom = []
 for i in range(1,6):
     rockChoose = pygame.image.load(f'assets/rocks/r{i}.png')
-    rockList.append(rockChoose)
-
-print(rockList)
+    rockRandom.append(rockChoose)
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y, scale, location):
@@ -58,11 +73,33 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = (x,y)
         self.location = location
         self.rate = 0
+        self.velocity = 0
 
     def update(self):
         if self.rate > 0:
             self.rate -= 1
-    
+
+        collisionsAlien = pygame.sprite.spritecollide(self, alienGroup, False)
+        for i in collisionsAlien:      
+            if self.lives != 0:  
+                self.lives -= 1
+
+        collisionsRock = pygame.sprite.spritecollide(self, rockGroup, False)
+        for j in collisionsRock:      
+            if self.lives != 0:  
+                self.lives -= 3
+                self.kill()
+
+        collisionsLog = pygame.Rect.colliderect(self.rect, log.rect)
+        if collisionsLog:
+            #print(log.pos, self.rect.y) 
+            if self.rect.y < log.pos - 48 or self.rect.y > log.pos + 48:
+                if self.lives != 0:  
+                    self.lives -= 1
+                    self.kill()
+            else:
+                pass
+
     def move(self, moveR, moveL, moveU, moveD):
         x = 0
         y = 0
@@ -71,19 +108,23 @@ class Player(pygame.sprite.Sprite):
             x = self.location
             self.directionx = 1
             self.flip = True
+            y = 0
         if moveL:
             x = -self.location
             self.directionx = -1
             self.flip = False 
+            y = 0
         if moveU: 
             y = -self.location
             self.directiony = 1
             self.flip = True
+            x = 0
         if moveD:
             y = self.location
             self.directiony = -1
             self.flip = False
-
+            x = 0
+            
         if self.rect.bottom + y > 740:
             y = 740 - self.rect.bottom
         
@@ -97,12 +138,12 @@ class Player(pygame.sprite.Sprite):
             x = 120 - self.rect.right
         
         self.rect.x += x
-        self.rect.y += y
+        self.rect.y += y      
 
     def shoot(self):
         if self.rate == 0:
             self.rate = 30
-            bullet = Bullet(self.rect.centerx+(40*self.directionx), self.rect.centery+(5*self.directiony),self.directionx, self.directiony)
+            bullet = Bullet(self.rect.centerx+(40*self.directionx), self.rect.centery+(5*self.directiony),self.directionx)
             bulletGroup.add(bullet)
 
     def show(self):
@@ -110,8 +151,78 @@ class Player(pygame.sprite.Sprite):
 
 player = Player(600, 400, 1, 4)
 
+class Alien(pygame.sprite.Sprite):
+    def __init__(self, x, y, location):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = a
+        self.rect = self.image.get_rect()
+        self.rect.center = (x,y)
+        self.location = location
+        self.speed = 2
+
+    def move(self):
+        self.rect.x -= self.speed
+
+    def update(self): 
+        global aliensKilled 
+        collisionsBullet = pygame.sprite.spritecollide(self, bulletGroup, False)
+        for k in collisionsBullet:    
+            print('1')  
+            self.kill()
+            aliensKilled += 1
+
+alienGroup = pygame.sprite.Group()
+
+nA = (aliensKilled+1)*2 #number of aliens corresponding to aliens killed
+alienList = []
+for j in range(nA):
+    alien = Alien(1200, (random.randint(70, 680)), 2)
+    alienGroup.add(alien)
+    alienList.append(alien)
+
+class Log(pygame.sprite.Sprite):
+    def __init__(self, x, y, location):
+        pygame.sprite.Sprite.__init__(self)
+        #self.sprites = [] #disabling animation for now
+        #self.sprites.append(l1)
+        #self.sprites.append(l2)
+        #self.current_sprite = 0
+        #self.image = self.sprites[self.current_sprite]
+        self.image = l1
+        self.image2 = pygame.image.load('assets/opening.png')
+        self.rect = self.image.get_rect()
+        self.rect2 = self.image2.get_rect()
+        self.rect.center = (x,y)
+        self.rect2.center = (x,y)
+        self.location = location
+        self.speed = 3
+        self.pos = random.randint(70, 580) 
+
+    def update(self):
+        pass
+
+    def moveLR(self):
+        self.rect.x += self.speed
+        self.rect2.x += self.speed
+
+    def moveRL(self): 
+        self.rect.x = (self.rect.x *-1) + self.speed
+        self.rect2.x = (self.rect2.x *-1) + self.speed
+        self.pos = random.randint(70, 580)
+        
+    def show(self):
+        #disabling animation for now
+        #self.current_sprite += 0 
+        #if self.current_sprite > 1:
+            #self.current_sprite = 0
+        #self.image = self.sprites[int(self.current_sprite)]
+        window.blit(self.image, (self.rect.x, self.rect.y))
+        window.blit(self.image2, (self.rect2.x, self.pos))
+
+log = Log(100, 396, 3)
+
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, x, y, directionx, directiony):
+    def __init__(self, x, y, directionx):
         pygame.sprite.Sprite.__init__(self)
         self.image = b
         self.directionx = directionx
@@ -130,34 +241,49 @@ class Bullet(pygame.sprite.Sprite):
 bulletGroup = pygame.sprite.Group()
 
 class Rock(pygame.sprite.Sprite):
-    def __init__(self, x, y, width):
+    def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        self.image = random.choice(rockList)
+        self.image = random.choice(rockRandom)
         self.rect = self.image.get_rect()
-        self.rect.center = (x,y)
+        self.rect.x = x
+        self.rect.y = y
 
 rockGroup = pygame.sprite.Group()
-for i in range(3):
-    rock = Rock(random.randint(60, 950), random.randint(100, 660), random.randint(200, 1500))
-    rockGroup.add(rock)
 
-lvl = 1
+rockList = []
+for i in range(3):
+    x = random.randint(60, 1080)
+    y = random.randint(70, 680)
+    rock = Rock(x, y)
+    rockList.append(rock)
+    rockGroup.add(rock)
+    if x <= 600+70 and x >= 600-70 and y <= 400+70 and y >= 400-70:
+        x += random.randint(80, 100)
+        y += random.randint(80, 100)
+        rock = Rock(x, y)
+        rockList.append(rock)
+        rockGroup.add(rock)
+
+
 gameOver = False
+
 moveR = False
 moveL = False
 moveU = False
 moveD = False
 shoot = False
+
+jump = False
 playerTurn = False
+
+click = False 
 
 #game loop
 while True: 
-
-    window.blit(bg, (0, 0))
-
     if gameOver == True: 
         window.blit(over_bg, (0, 0))
-        menu("GAME OVER", font, mColor, 600, 400)
+        menu("YOU DIED", font, mColor, 500, 320)
+        menu("GAME OVER", font, mColor, 480, 400)
 
     elif gamePause == True:
         window.blit(menu_bg, (0, 0))
@@ -171,32 +297,49 @@ while True:
             sys.exit()
 
     else:
+        gameOver = False
+        window.blit(bg, (0, 0))
+        
+        menu(f"Direction: {player.directionx, player.directiony}", font3, mColor, 975, 20)
 
-        menu("press 'ESC' to pause", font3, mColor, 920, 745)
-        menu(f"LEVEL: {lvl}", font3, mColor, 995, 90)
-        menu(f"Direction: {player.directionx, player.directiony}", font3, mColor, 75, 745)
+        menu(f"Location: {player.rect.x, player.rect.y}", font3, mColor, 75, 20)
+        menu(f"tap SPACE to shoot", font3, mColor, 520, 20)
+
         hearts = player.lives * ' X '
         if player.lives == 0:
-            menu(f"LIVES: *DEAD*", font3, mColor, 995, 65)
+            menu(f"LIVES: *DEAD*", font3, mColor, 75, 745)
         else:
-            menu(f"LIVES:{hearts}", font3, mColor, 995, 65)
-        menu(f"Location: {player.rect.x, player.rect.y}", font3, mColor, 75, 20)
-        menu(f"tap SPACE to shoot", font3, mColor, 350, 745)
+            menu(f"LIVES:{hearts}", font3, mColor, 75, 745)
+    
+        menu(f"ALIENS KILLED: {aliensKilled}", font3, mColor, 390, 745)
+        menu(f"LEVEL: {lvl}", font3, mColor, 720, 745)
+
         if player.rate == 0:
-            menu(f"Fire Rate: ready", font3, mColor, 655, 745)
+            menu(f"Fire Rate: ready", font3, mColor, 945, 745)
         else:
-            menu(f"Fire Rate: {player.rate}", font3, mColor, 655, 745)
+            menu(f"Fire Rate: {player.rate}", font3, mColor, 945, 745)
         
         rockGroup.draw(window)
 
         bulletGroup.draw(window)
         bulletGroup.update()
 
+        log.show()
+        log.moveLR()
+        if log.rect2.x >= 1080 and log.rect.x >= 1080:
+            log.moveRL()
+            print(log.rect.x, log.rect2.x)
+        #log.update()
+
+        alienGroup.draw(window)
+        alienGroup.update()
+        alien.move()
+
         player.update()
         player.show()
         player.move(moveR, moveL, moveU, moveD)
 
-        if player.lives <= 3 and player.lives != 0:
+        if player.lives <= 3 and player.lives > 0:
             if shoot: 
                 comb = []
                 comb.append(player.directionx)
@@ -208,10 +351,15 @@ while True:
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
+        
+        if player.lives == 0:
+            gameOver = True
 
         if event.type == KEYDOWN:
             if event.key == K_ESCAPE:
                 gamePause = True
+            if event.key == K_e:
+                jump = True
             if event.key == K_SPACE:
                 shoot = True
             if event.key == K_RIGHT or event.key == K_d:
@@ -224,6 +372,8 @@ while True:
                 moveD = True
 
         if event.type == KEYUP:
+            if event.key == K_e:
+                jump = False
             if event.key == K_SPACE:
                 shoot = False
             if event.key == K_RIGHT or event.key == K_d:
@@ -235,8 +385,6 @@ while True:
             if event.key == K_DOWN or event.key == K_s:
                 moveD = False
 
-        if player.lives == 0:
-            gameOver = True
-
     pygame.display.update()
     clock.tick(60)
+

@@ -1,4 +1,4 @@
-import pygame
+import pygame, sys
 
 class Button():
 	def __init__(self, x, y, image, scale):
