@@ -6,7 +6,7 @@ When the enemies reach the other end of the screen, player loses a life moreover
 
 https://user-images.githubusercontent.com/91330011/193839239-72f05367-5c18-4dc7-9603-c7f81bd3628c.mp4
 
-![pic1](https://user-images.githubusercontent.com/91330011/193837579-8897451f-bd03-42f2-9ea6-992590694226.png)
+![pic](https://user-images.githubusercontent.com/91330011/193839913-3f9d5bd5-285b-4318-810a-ccaf64f9a851.png)
 
 ![unknown](https://user-images.githubusercontent.com/91330011/192030574-85410cda-6f95-45a9-ac37-5f556b95fa60.png)
 
