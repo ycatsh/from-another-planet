@@ -86,6 +86,13 @@ class Player(pygame.sprite.Sprite):
         for i in collisionsAlien:      
             if self.lives != 0:  
                 self.lives -= 1
+                self.kill()
+
+        collisionsBlue = pygame.Rect.colliderect(self.rect, alien.rect2)
+        if collisionsBlue:
+            if self.lives != 0:  
+                self.lives -= 1
+                self.kill()
 
         collisionsRock = pygame.sprite.spritecollide(self, rockGroup, False)
         for j in collisionsRock:      
