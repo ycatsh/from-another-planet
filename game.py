@@ -183,10 +183,11 @@ class Alien(pygame.sprite.Sprite):
         collisionsBullet = pygame.sprite.spritecollide(self, bulletGroup, False)
 
         for k in collisionsBullet:   
-            self.kill()
-            alienList.remove(alien) 
-            bulletGroup.remove(bullet)
-            aliensKilled += 1
+            if player.lives > 0:
+                self.kill()
+                alienList.remove(alien) 
+                bulletGroup.remove(bullet)
+                aliensKilled += 1
 
     def show(self):
         window.blit(self.image, (self.rect.x, self.rect.y))
@@ -215,11 +216,12 @@ class blueAlien(pygame.sprite.Sprite):
 
             collisions_blueBullet = pygame.sprite.spritecollide(self, bulletGroup, False)
 
-            for l in collisions_blueBullet:   
-                self.kill()
-                blue_alienList.remove(alienBlue) 
-                bulletGroup.remove(bullet)
-                aliensKilled += 1
+            for l in collisions_blueBullet: 
+                if player.lives > 0:  
+                    self.kill()
+                    blue_alienList.remove(alienBlue) 
+                    bulletGroup.remove(bullet)
+                    aliensKilled += 1
 
     def show(self):
         if self.chance == 2:
@@ -296,6 +298,19 @@ class Rock(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+
+    def update(self):
+        collisionsAlien = pygame.sprite.spritecollide(self, alienList, False)
+        for h in collisionsAlien:
+            self.kill()  
+            alienList.remove(alien)
+            rockGroup.remove(rock)
+
+        collisionsBlue = pygame.sprite.spritecollide(self, blue_alienList, False)
+        for i in collisionsBlue:
+            self.kill()
+            blue_alienList.remove(alienBlue)
+            rockGroup.remove(rock)
 
 rockGroup = pygame.sprite.Group()
 
@@ -382,8 +397,8 @@ while True:
 
             log.update()
 
-
         rockGroup.draw(window)
+        rockGroup.update()
 
         bulletGroup.draw(window)
         bulletGroup.update()
@@ -398,18 +413,20 @@ while True:
             alien.show()
             alien.update()
             alien.move()
+            if player.lives > 0:
+                if alien.rect.x + alien.image.get_width() < 64: 
+                        player.lives -= 1
+                        alienList.remove(alien)
 
         for alienBlue in blue_alienList:
             alienBlue.show()
             alienBlue.update()
             alienBlue.move()
 
-            if alien.rect.x + alien.image.get_width() < 64: 
-                player.lives -= 1
-                alienList.remove(alien)
-            if alienBlue.rect.x + alienBlue.image.get_width() < 64: 
-                player.lives -= 1
-                blue_alienList.remove(alienBlue)
+            if player.lives > 0:
+                if alienBlue.rect.x + alienBlue.image.get_width() < 64: 
+                    player.lives -= 1
+                    blue_alienList.remove(alienBlue)
 
         player.update()
         player.show()
