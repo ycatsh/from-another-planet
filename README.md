@@ -16,7 +16,7 @@ https://user-images.githubusercontent.com/91330011/194007828-e9a4935a-66b0-41f9-
 ### Case: aliens reach the left end of the screen 
 https://user-images.githubusercontent.com/91330011/194008345-e70d5678-4abf-48f2-9086-4a0b4270d072.mp4
 
-### Images:
+### Screenshots:
 ![pic](https://user-images.githubusercontent.com/91330011/193839913-3f9d5bd5-285b-4318-810a-ccaf64f9a851.png)
 
 ![unknown](https://user-images.githubusercontent.com/91330011/192030574-85410cda-6f95-45a9-ac37-5f556b95fa60.png)
