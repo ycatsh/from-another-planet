@@ -189,6 +189,11 @@ class Alien(pygame.sprite.Sprite):
                 bulletGroup.remove(bullet)
                 aliensKilled += 1
 
+        collisionsRock = pygame.sprite.spritecollide(self, rockGroup, False)
+        for j in collisionsRock:      
+                self.kill()
+                alienList.remove(alien) 
+
     def show(self):
         window.blit(self.image, (self.rect.x, self.rect.y))
 
@@ -222,6 +227,11 @@ class blueAlien(pygame.sprite.Sprite):
                     blue_alienList.remove(alienBlue) 
                     bulletGroup.remove(bullet)
                     aliensKilled += 1
+
+            collisionsRock = pygame.sprite.spritecollide(self, rockGroup, False)
+            for m in collisionsRock:      
+                self.kill()
+                blue_alienList.remove(alienBlue) 
 
     def show(self):
         if self.chance == 2:
@@ -299,15 +309,6 @@ class Rock(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
-    def update(self):
-        collisionsAlien = pygame.Rect.colliderect(self.rect, alien.rect)
-        if collisionsAlien:
-            alienList.remove(alien) 
-
-        collisionsAlien = pygame.Rect.colliderect(self.rect, alienBlue.rect)
-        if collisionsAlien:
-            blue_alienList.remove(alienBlue) 
-
 rockGroup = pygame.sprite.Group()
 
 rockList = []
@@ -340,6 +341,7 @@ click = False
 
 #game loop
 while True: 
+
     if gameOver == True: 
         window.blit(over_bg, (0, 0))
         menu("YOU DIED", font, mColor, 500, 320)
