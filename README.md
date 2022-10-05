@@ -5,7 +5,7 @@ Kill the incomming enemies to advance levels, the speed of the lag/laser and fre
 When the enemies reach the other end of the screen, player loses a life moreover the rocks and red laser/log instantly kill the player on contact
 
 ### Sample Gameplay
-https://user-images.githubusercontent.com/91330011/194004483-69cf1c91-1c32-41de-9059-23682754de07.mp4
+https://user-images.githubusercontent.com/91330011/194037704-ab7fcc3d-9b5a-4d07-bb35-726918e01f31.mp4
 
 ### Case: player collides with red laser/log or the space rocks 
 https://user-images.githubusercontent.com/91330011/194004494-2616fb2c-2af9-4afd-8575-ab586872d803.mp4
