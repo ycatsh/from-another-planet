@@ -1,3 +1,4 @@
+from binascii import a2b_uu
 import pygame, sys
 from pygame.locals import *
 import buttons 
@@ -27,7 +28,9 @@ mColor = (110, 69, 206)
 lvl = 1
 aliensKilled = 0
 nA = 4 #number of aliens every level; level 1: 4
+n_bA = 2 #number of blue aliens every level
 alienList = []
+blue_alienList = []
 
 #buttons
 playButton = pygame.image.load('assets/resume_button.png')
@@ -83,13 +86,13 @@ class Player(pygame.sprite.Sprite):
             self.rate -= 1
 
         collisionsAlien = pygame.sprite.spritecollide(self, alienList, False)
-        for i in collisionsAlien:      
+        for h in collisionsAlien:      
             if self.lives != 0:  
                 self.lives -= 1
                 self.kill()
 
-        collisionsBlue = pygame.Rect.colliderect(self.rect, alien.rect2)
-        if collisionsBlue:
+        collisionsBlue = pygame.sprite.spritecollide(self, blue_alienList, False)
+        for i in collisionsBlue:
             if self.lives != 0:  
                 self.lives -= 1
                 self.kill()
@@ -166,21 +169,14 @@ class Alien(pygame.sprite.Sprite):
     def __init__(self, x, y, location):
         pygame.sprite.Sprite.__init__(self)
         self.image = a
-        self.image2 = a2
         self.rect = self.image.get_rect()
-        self.rect2 = self.image.get_rect()
         self.rect.center = (x,y)
-        self.rect2.center = (x,y)
         self.location = location
         self.speed = 2
-        self.speed2 = 3
-        self.chance = random.randint(1,5)
 
     def move(self):
         self.rect.x -= self.speed
-        if self.chance == 2:
-            self.rect2.x -= self.speed2
-
+    
     def update(self): 
         global aliensKilled 
 
@@ -193,13 +189,45 @@ class Alien(pygame.sprite.Sprite):
             aliensKilled += 1
 
     def show(self):
-        window.blit(a, (self.rect.x, self.rect.y))
-        if self.chance == 2:
-            window.blit(a2, (self.rect2.x, self.rect2.y))
+        window.blit(self.image, (self.rect.x, self.rect.y))
 
 for j in range(nA):
     alien = Alien(random.randint(1200, 1400), (random.randint(70, 680)), 3)
     alienList.append(alien)
+
+class blueAlien(pygame.sprite.Sprite):
+    def __init__(self, x, y, location):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = a2
+        self.rect = self.image.get_rect()
+        self.rect.center = (x,y)
+        self.location = location
+        self.speed = 3
+        self.chance = random.randint(1,5)
+
+    def move(self):
+        if self.chance == 2:
+            self.rect.x -= self.speed
+    
+    def update(self):
+        if self.chance == 2:
+            global aliensKilled 
+
+            collisions_blueBullet = pygame.sprite.spritecollide(self, bulletGroup, False)
+
+            for l in collisions_blueBullet:   
+                self.kill()
+                blue_alienList.remove(alienBlue) 
+                bulletGroup.remove(bullet)
+                aliensKilled += 1
+
+    def show(self):
+        if self.chance == 2:
+            window.blit(self.image, (self.rect.x, self.rect.y))
+
+for k in range(n_bA):
+    alienBlue = blueAlien(random.randint(1200, 1400), (random.randint(70, 680)), 3)
+    blue_alienList.append(alienBlue)
 
 class Log(pygame.sprite.Sprite):
     def __init__(self, x, y, location):
@@ -343,10 +371,17 @@ while True:
         if len(alienList) == 0:
             lvl += 1
             nA += 2
+            n_bA += 1
             for j in range(nA):
                 alien = Alien(random.randint(1200, 1400), (random.randint(70, 680)), 2)
                 alienList.append(alien)
+
+            for k in range(n_bA):
+                alienBlue = blueAlien(random.randint(1200, 1400), (random.randint(70, 680)), 3)
+                blue_alienList.append(alienBlue)
+
             log.update()
+
 
         rockGroup.draw(window)
 
@@ -363,9 +398,18 @@ while True:
             alien.show()
             alien.update()
             alien.move()
-            if alien.rect.x + alien.image.get_height() < 64: 
+
+        for alienBlue in blue_alienList:
+            alienBlue.show()
+            alienBlue.update()
+            alienBlue.move()
+
+            if alien.rect.x + alien.image.get_width() < 64: 
                 player.lives -= 1
                 alienList.remove(alien)
+            if alienBlue.rect.x + alienBlue.image.get_width() < 64: 
+                player.lives -= 1
+                blue_alienList.remove(alienBlue)
 
         player.update()
         player.show()
