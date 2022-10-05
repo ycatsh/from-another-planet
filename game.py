@@ -409,7 +409,7 @@ while True:
 
 	if gameStart == True and gamePause == False:
 
-		player.lives == 3
+		player.lives = 3
 		gameOver = False
 
 		window.blit(bg, (0, 0))
