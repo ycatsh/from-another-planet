@@ -313,18 +313,17 @@ rockGroup = pygame.sprite.Group()
 
 rockList = []
 for i in range(3):
-    x = random.randint(60, 1080)
-    y = random.randint(70, 680)
+    x = random.randint(60, 1030)
+    y = random.randint(70, 630)
     rock = Rock(x, y)
     rockList.append(rock)
     rockGroup.add(rock)
     if x <= 600+70 and x >= 600-70 and y <= 400+70 and y >= 400-70:
         x += random.randint(80, 100)
-        y += random.randint(80, 100)
+        y += random.randint(80, 90)
         rock = Rock(x, y)
         rockList.append(rock)
         rockGroup.add(rock)
-
 
 gameOver = False
 
@@ -443,7 +442,7 @@ while True:
             pygame.quit()
             sys.exit()
         
-        if player.lives == 0:
+        if player.lives <= 0:
             gameOver = True
 
         if event.type == KEYDOWN:
