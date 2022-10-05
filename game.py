@@ -300,17 +300,13 @@ class Rock(pygame.sprite.Sprite):
         self.rect.y = y
 
     def update(self):
-        collisionsAlien = pygame.sprite.spritecollide(self, alienList, False)
-        for h in collisionsAlien:
-            self.kill()  
-            alienList.remove(alien)
-            rockGroup.remove(rock)
+        collisionsAlien = pygame.Rect.colliderect(self.rect, alien.rect)
+        if collisionsAlien:
+            alienList.remove(alien) 
 
-        collisionsBlue = pygame.sprite.spritecollide(self, blue_alienList, False)
-        for i in collisionsBlue:
-            self.kill()
-            blue_alienList.remove(alienBlue)
-            rockGroup.remove(rock)
+        collisionsAlien = pygame.Rect.colliderect(self.rect, alienBlue.rect)
+        if collisionsAlien:
+            blue_alienList.remove(alienBlue) 
 
 rockGroup = pygame.sprite.Group()
 
