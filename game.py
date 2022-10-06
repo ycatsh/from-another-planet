@@ -61,7 +61,7 @@ l2 = pygame.image.load('assets/log2.png')
 
 rockRandom = []
 for i in range(1,7):
-	rockChoose = pygame.image.load(f'assets/rocks/r{i}.png').convert_alpha()
+	rockChoose = pygame.image.load(f'assets/rocks/r{i}.png')
 	rockRandom.append(rockChoose)
 
 class Button():
@@ -336,8 +336,6 @@ class Rock(pygame.sprite.Sprite):
 	def __init__(self, x, y):
 		pygame.sprite.Sprite.__init__(self)
 		self.image = random.choice(rockRandom)
-		self.image.set_colorkey((255,255,255))
-		print(self.image.get_height(), self.image.get_width())
 		self.rect = self.image.get_rect()
 		self.rect.x = x
 		self.rect.y = y
