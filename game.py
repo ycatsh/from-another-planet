@@ -408,9 +408,6 @@ while True:
 
 	if gameStart == True and gamePause == False:
 
-		player.lives == 3
-		gameOver = False
-
 		window.blit(bg, (0, 0))
 		
 		menu(f"Direction: {player.directionx, player.directiony}", font3, mColor, 975, 20)
