@@ -446,9 +446,6 @@ while True:
 
 			log.update()
 
-		player.show()
-		player.move(moveR, moveL, moveU, moveD)
-
 		rockGroup.draw(window)
 		rockGroup.update()
 
@@ -462,6 +459,8 @@ while True:
 			#print(log.rect.x, log.rect2.x)
 		
 		player.update()
+		player.show()
+		player.move(moveR, moveL, moveU, moveD)
 
 		for alien in alienList:
 			alien.show()
