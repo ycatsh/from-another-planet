@@ -232,7 +232,7 @@ for j in range(nA):
 	alien = Alien(random.randint(1200, 1400), (random.randint(70, 680)), 3)
 	alienList.append(alien)
 
-class blueAlien(pygame.sprite.Sprite):
+class BlueAlien(pygame.sprite.Sprite):
 	def __init__(self, x, y, location):
 		pygame.sprite.Sprite.__init__(self)
 		self.image = a2
@@ -269,7 +269,7 @@ class blueAlien(pygame.sprite.Sprite):
 			window.blit(self.image, (self.rect.x, self.rect.y))
 
 for k in range(n_bA):
-	alienBlue = blueAlien(random.randint(1200, 1400), (random.randint(70, 680)), 3)
+	alienBlue = BlueAlien(random.randint(1200, 1400), (random.randint(70, 680)), 3)
 	blue_alienList.append(alienBlue)
 
 class Log(pygame.sprite.Sprite):
@@ -441,7 +441,7 @@ while True:
 				alienList.append(alien)
 
 			for k in range(n_bA):
-				alienBlue = blueAlien(random.randint(1200, 1400), (random.randint(70, 680)), 3)
+				alienBlue = BlueAlien(random.randint(1200, 1400), (random.randint(70, 680)), 3)
 				blue_alienList.append(alienBlue)
 
 			log.update()
