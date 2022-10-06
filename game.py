@@ -14,6 +14,7 @@ gamePause = False
 gameOver = False
 gameStart = False 
 
+#icons
 icon = pygame.image.load('assets/icon.png')
 pygame.display.set_icon(icon)
 pygame.display.set_caption("From Another Planet")
@@ -32,9 +33,11 @@ def menu(text, font, mColor, x, y):
 lvl = 1
 nA = 4 #number of aliens every level; level 1: 4
 n_bA = 2 #number of blue aliens every level
+n_hP = 1 #number of health pots 
 
 alienList = []
 blue_alienList = []
+health_potList = []
 aliensKilled = 0
 
 #cursor 
@@ -46,6 +49,9 @@ start_bg = pygame.image.load('assets/start_bg.png')
 start_bg2 = pygame.image.load('assets/start_blur.png')
 menu_bg = pygame.image.load('assets/menu_bg.png')
 over_bg = pygame.image.load('assets/over_bg.png')
+
+#pots/items
+h_pot = pygame.image.load('assets/hpot.png')
 
 #player and enemy
 p = pygame.image.load('assets/p.png')
@@ -97,6 +103,29 @@ quit_overButton = Button(bQ, 600, 530)
 play_pauseButton = Button(bP, 600, 430)
 quit_pauseButton = Button(bQ, 600, 520)
 
+class HealthPot(pygame.sprite.Sprite):
+	def __init__(self, x, y):
+		pygame.sprite.Sprite.__init__(self)
+		self.image = h_pot
+		self.rect = self.image.get_rect()
+		self.rect.center = (x,y)
+		self.chance = 2
+
+	def update(self):
+
+		collisionPlayer = pygame.Rect.colliderect(self.rect, player.rect)
+		if collisionPlayer:
+			if player.lives < 3:  
+				player.lives += 1
+				health_potList.remove(self)
+
+	def show(self):	
+		if self.chance == 2:
+			window.blit(self.image, (self.rect.x, self.rect.y))
+
+for k in range(n_hP):
+	hPot = HealthPot(random.randint(100, 500), random.randint(200, 600))
+	health_potList.append(hPot)
 
 class Player(pygame.sprite.Sprite):
 	def __init__(self, x, y, scale, location):
@@ -110,7 +139,6 @@ class Player(pygame.sprite.Sprite):
 		self.rect.center = (x,y)
 		self.location = location
 		self.rate = 0
-		self.velocity = 0
 
 	def update(self):
 		if self.rate > 0:
@@ -195,6 +223,24 @@ class Player(pygame.sprite.Sprite):
 		window.blit(pygame.transform.flip(self.image, self.flip, self.flip), self.rect)
 
 player = Player(600, 400, 1, 4)
+
+lives = []
+for x in range(4):
+	healthImage = pygame.image.load(f'assets/health/{x}.png')
+	lives.append(healthImage)
+
+class HealthBar():
+	def __init__(self, image, x, y, scale):
+		width = image.get_width()
+		height = image.get_height()
+		self.image = pygame.transform.scale(image, (int(width*scale), int(height*scale)))
+		self.rect = self.image.get_rect()
+		self.rect.center = (x,y)
+
+	def show(self):
+		window.blit(lives[player.lives], (self.rect.x, self.rect.y))
+
+HEALTH = HealthBar(lives[player.lives], 140, 755, 0.7)
 
 class Alien(pygame.sprite.Sprite):
 	def __init__(self, x, y, location):
@@ -287,11 +333,11 @@ class Log(pygame.sprite.Sprite):
 		self.rect.center = (x,y)
 		self.rect2.center = (x,y)
 		self.location = location
-		self.speed = 3
+		self.speed = 2
 		self.pos = random.randint(70, 580) 
 
 	def update(self):
-		self.speed += lvl/5
+		self.speed += lvl/10
 
 	def moveLR(self):
 		self.rect.x += self.speed
@@ -349,8 +395,8 @@ for i in range(3):
 	rock = Rock(x, y)
 	rockList.append(rock)
 	rockGroup.add(rock)
-	if x <= 600+70 and x >= 600-70 and y <= 400+70 and y >= 400-70:
-		x += random.randint(80, 100)
+	if x <= 600+80 and x >= 600-80 and y <= 400+80 and y >= 400-80:
+		x += random.randint(100, 120)
 		y += random.randint(80, 90)
 		rock = Rock(x, y)
 		rockList.append(rock)
@@ -415,11 +461,7 @@ while True:
 		menu(f"Location: {player.rect.x, player.rect.y}", font3, mColor, 75, 20)
 		menu(f"tap SPACE to shoot", font3, mColor, 520, 20)
 
-		hearts = player.lives * ' X '
-		if player.lives == 0:
-			menu(f"LIVES: *DEAD*", font3, mColor, 75, 745)
-		else:
-			menu(f"LIVES:{hearts}", font3, mColor, 75, 745)
+		HEALTH.show()
 	
 		menu(f"ALIENS KILLED: {aliensKilled}", font3, mColor, 390, 745)
 		menu(f"LEVEL: {lvl}", font3, mColor, 720, 745)
@@ -431,8 +473,9 @@ while True:
 
 		if len(alienList) == 0:
 			lvl += 1
-			nA += 2
+			nA += 1
 			n_bA += 1
+			n_hP += 1
 			for j in range(nA):
 				alien = Alien(random.randint(1200, 1400), (random.randint(70, 680)), 2)
 				alienList.append(alien)
@@ -458,6 +501,10 @@ while True:
 		player.update()
 		player.show()
 		player.move(moveR, moveL, moveU, moveD)
+
+		for hPot in health_potList:
+			hPot.show()
+			hPot.update()
 
 		for alien in alienList:
 			alien.show()
