@@ -60,8 +60,8 @@ l1 = pygame.image.load('assets/log1.png')
 l2 = pygame.image.load('assets/log2.png')
 
 rockRandom = []
-for i in range(1,6):
-	rockChoose = pygame.image.load(f'assets/rocks/r{i}.png')
+for i in range(1,7):
+	rockChoose = pygame.image.load(f'assets/rocks/r{i}.png').convert_alpha()
 	rockRandom.append(rockChoose)
 
 class Button():
@@ -336,6 +336,8 @@ class Rock(pygame.sprite.Sprite):
 	def __init__(self, x, y):
 		pygame.sprite.Sprite.__init__(self)
 		self.image = random.choice(rockRandom)
+		self.image.set_colorkey((255,255,255))
+		print(self.image.get_height(), self.image.get_width())
 		self.rect = self.image.get_rect()
 		self.rect.x = x
 		self.rect.y = y
@@ -446,6 +448,9 @@ while True:
 
 			log.update()
 
+		player.show()
+		player.move(moveR, moveL, moveU, moveD)
+
 		rockGroup.draw(window)
 		rockGroup.update()
 
@@ -457,6 +462,8 @@ while True:
 		if log.rect2.x >= 1080 and log.rect.x >= 1080:
 			log.moveRL()
 			#print(log.rect.x, log.rect2.x)
+		
+		player.update()
 
 		for alien in alienList:
 			alien.show()
@@ -476,10 +483,6 @@ while True:
 				if alienBlue.rect.x + alienBlue.image.get_width() < 64: 
 					player.lives -= 1
 					blue_alienList.remove(alienBlue)
-
-		player.update()
-		player.show()
-		player.move(moveR, moveL, moveU, moveD)
 
 		if player.lives <= 3 and player.lives > 0:
 			if shoot: 
