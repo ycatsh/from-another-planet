@@ -25,19 +25,20 @@ font2 = pygame.font.Font("assets/fonts/font.ttf", 30)
 font3 = pygame.font.Font("assets/fonts/font.ttf", 25)
 
 mColor = (110, 69, 206)
+def menu(text, font, mColor, x, y):
+	m = font.render(text, True, mColor)
+	window.blit(m, (x,y))
+
 lvl = 1
-aliensKilled = 0
 nA = 4 #number of aliens every level; level 1: 4
 n_bA = 2 #number of blue aliens every level
+
 alienList = []
 blue_alienList = []
+aliensKilled = 0
 
 #cursor 
 cursor = pygame.image.load('assets/cursor.png')
-
-#buttons
-bP = pygame.image.load('assets/resume_button.png').convert_alpha()
-bQ = pygame.image.load('assets/quit_button.png').convert_alpha()
 
 #backgrounds
 bg = pygame.image.load('assets/bg.png')
@@ -86,18 +87,16 @@ class Button():
 
 		return action 
 
+#buttons
+bP = pygame.image.load('assets/resume_button.png').convert_alpha()
+bQ = pygame.image.load('assets/quit_button.png').convert_alpha()
 playButton = Button(bP, 590, 420)
 quitButton = Button(bQ, 590, 530)
-
 play_overButton = Button(bP, 600, 450)
 quit_overButton = Button(bQ, 600, 530)
-
 play_pauseButton = Button(bP, 600, 430)
 quit_pauseButton = Button(bQ, 600, 520)
 
-def menu(text, font, mColor, x, y):
-	m = font.render(text, True, mColor)
-	window.blit(m, (x,y))
 
 class Player(pygame.sprite.Sprite):
 	def __init__(self, x, y, scale, location):
