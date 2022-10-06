@@ -33,7 +33,7 @@ def menu(text, font, mColor, x, y):
 lvl = 1
 nA = 4 #number of aliens every level; level 1: 4
 n_bA = 2 #number of blue aliens every level
-n_hP = 1 #number of health pots 
+n_hP = 0 #number of health pots 
 
 alienList = []
 blue_alienList = []
@@ -109,7 +109,6 @@ class HealthPot(pygame.sprite.Sprite):
 		self.image = h_pot
 		self.rect = self.image.get_rect()
 		self.rect.center = (x,y)
-		self.chance = 2
 
 	def update(self):
 
@@ -119,11 +118,11 @@ class HealthPot(pygame.sprite.Sprite):
 				player.lives += 1
 				health_potList.remove(self)
 
-	def show(self):	
-		if self.chance == 2:
-			window.blit(self.image, (self.rect.x, self.rect.y))
 
-for k in range(n_hP):
+	def show(self):	
+		window.blit(self.image, (self.rect.x, self.rect.y))
+
+for o in range(n_hP):
 	hPot = HealthPot(random.randint(100, 500), random.randint(200, 600))
 	health_potList.append(hPot)
 
@@ -483,8 +482,16 @@ while True:
 			for k in range(n_bA):
 				alienBlue = BlueAlien(random.randint(1200, 1400), (random.randint(70, 680)), 3)
 				blue_alienList.append(alienBlue)
+			
+			for o in range(n_hP):
+				hPot = HealthPot(random.randint(100, 500), random.randint(200, 600))
+				health_potList.append(hPot)
 
 			log.update()
+		
+		if len(health_potList) > 4:
+			for hPot in health_potList:
+				health_potList.remove(hPot)
 
 		rockGroup.draw(window)
 		rockGroup.update()
