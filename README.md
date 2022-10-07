@@ -15,8 +15,3 @@ https://user-images.githubusercontent.com/91330011/194570272-55fd5e2b-2bd4-4f24-
 
 ### Case: aliens reach the left end of the screen (-1 Life)
 https://user-images.githubusercontent.com/91330011/194571283-a150b7d8-e80a-4d4a-8f62-9c87dbd5da85.mp4
-
-### Screenshots:
-![1](https://user-images.githubusercontent.com/91330011/194572150-3b638346-5fbe-4ccc-ba59-e141acbd9667.png)
-
-![2](https://user-images.githubusercontent.com/91330011/194572147-360be121-7285-4642-9543-c387b462493b.png)
