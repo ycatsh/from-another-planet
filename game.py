@@ -17,8 +17,8 @@ pygame.display.set_caption("From Another Planet")
 #fonts C&C Red Alert [INET]
 menuFont = pygame.font.Font("assets/fonts/font.ttf", 100)
 font = pygame.font.Font("assets/fonts/font.ttf", 60) 
-font2 = pygame.font.Font("assets/fonts/font.ttf", 30)
-font3 = pygame.font.Font("assets/fonts/font.ttf", 25)
+font2 = pygame.font.Font("assets/fonts/font.ttf", 40)
+font3 = pygame.font.Font("assets/fonts/font.ttf", 30)
 
 mColor = (110, 69, 206)
 def menu(text, font, mColor, x, y):
@@ -208,7 +208,7 @@ class HealthBar():
 	def show(self):
 		window.blit(lives[player.lives], (self.rect.x, self.rect.y))
 
-HEALTH = HealthBar(lives[player.lives], 140, 755, 0.7)
+HEALTH = HealthBar(lives[player.lives], 560, 755, 0.7)
 
 class Alien(pygame.sprite.Sprite):
 	def __init__(self, x, y, location):
@@ -438,13 +438,8 @@ def main():
 
 			HEALTH.show()
 		
-			menu(f"ALIENS KILLED: {aliensKilled}", font3, mColor, 390, 745)
-			menu(f"LEVEL: {lvl}", font3, mColor, 720, 745)
-
-			if player.rate == 0:
-				menu(f"Fire Rate: ready", font3, mColor, 945, 745)
-			else:
-				menu(f"Fire Rate: {player.rate}", font3, mColor, 945, 745)
+			menu(f"ALIENS KILLED: {aliensKilled}", font3, mColor, 935, 747)
+			menu(f"LEVEL: {lvl}", font3, mColor, 100, 747)
 
 			if len(alienList) == 0:
 				lvl += 1
