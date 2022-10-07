@@ -17,8 +17,5 @@ https://user-images.githubusercontent.com/91330011/194570272-55fd5e2b-2bd4-4f24-
 https://user-images.githubusercontent.com/91330011/194571283-a150b7d8-e80a-4d4a-8f62-9c87dbd5da85.mp4
 
 ### Screenshots:
-![image](https://user-images.githubusercontent.com/91330011/194563212-ad419cce-1c71-4bb5-8471-afdee810d3c7.png)
-
-![image](https://user-images.githubusercontent.com/91330011/194563221-123fab30-8d33-4c24-906b-7b5b9ee0debb.png)
-
-
+![1](https://user-images.githubusercontent.com/91330011/194572150-3b638346-5fbe-4ccc-ba59-e141acbd9667.png)
+![2](https://user-images.githubusercontent.com/91330011/194572147-360be121-7285-4642-9543-c387b462493b.png)
