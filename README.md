@@ -5,19 +5,20 @@ Kill the incoming enemies to advance levels, the speed of the lag/laser and freq
 When the enemies reach the other end of the screen, player loses a life. Moreover, the rocks and red laser/log instantly kill the player on contact
 
 ### Sample Gameplay
-https://user-images.githubusercontent.com/91330011/194037704-ab7fcc3d-9b5a-4d07-bb35-726918e01f31.mp4
+https://user-images.githubusercontent.com/91330011/194570490-1b94885a-9323-4f2c-bc31-bac087a9ca2f.mp4
 
-### Case: player collides with red laser/log or the space rocks 
-https://user-images.githubusercontent.com/91330011/194004494-2616fb2c-2af9-4afd-8575-ab586872d803.mp4
+### Case: player collides with red laser/log or the space rocks (Instant Death)
+https://user-images.githubusercontent.com/91330011/194569795-653d4540-6aea-4087-8662-8d05336713d6.mp4
 
-### Case: player collides either one of the aliens 
-https://user-images.githubusercontent.com/91330011/194007828-e9a4935a-66b0-41f9-8063-f5b3399a5b5f.mp4
+### Case: player collides either one of the aliens (Instant Death)
+https://user-images.githubusercontent.com/91330011/194570272-55fd5e2b-2bd4-4f24-a915-219ce4037170.mp4
 
-### Case: aliens reach the left end of the screen 
-https://user-images.githubusercontent.com/91330011/194008345-e70d5678-4abf-48f2-9086-4a0b4270d072.mp4
+### Case: aliens reach the left end of the screen (-1 Life)
+https://user-images.githubusercontent.com/91330011/194571283-a150b7d8-e80a-4d4a-8f62-9c87dbd5da85.mp4
 
 ### Screenshots:
-![pic](https://user-images.githubusercontent.com/91330011/193839913-3f9d5bd5-285b-4318-810a-ccaf64f9a851.png)
+![image](https://user-images.githubusercontent.com/91330011/194563212-ad419cce-1c71-4bb5-8471-afdee810d3c7.png)
 
-![unknown](https://user-images.githubusercontent.com/91330011/192030574-85410cda-6f95-45a9-ac37-5f556b95fa60.png)
+![image](https://user-images.githubusercontent.com/91330011/194563221-123fab30-8d33-4c24-906b-7b5b9ee0debb.png)
+
 
