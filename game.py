@@ -7,15 +7,10 @@ clock = pygame.time.Clock()
 pygame.init()
 
 windowSize = (1200, 800)
-window = pygame.display.set_mode(windowSize, 0, 32)
-
-#game variables
-gamePause = False 
-gameOver = False
-gameStart = False 
+window = pygame.display.set_mode((windowSize), pygame.NOFRAME)
 
 #icons
-icon = pygame.image.load('assets/icon.png')
+icon = pygame.image.load('assets/icon.png').convert_alpha()
 pygame.display.set_icon(icon)
 pygame.display.set_caption("From Another Planet")
 
@@ -41,33 +36,30 @@ health_potList = []
 aliensKilled = 0
 
 #cursor 
-cursor = pygame.image.load('assets/cursor.png')
+cursor = pygame.image.load('assets/cursor.png').convert_alpha()
 
 #backgrounds
-bg = pygame.image.load('assets/bg.png')
-start_bg = pygame.image.load('assets/start_bg.png')
-start_bg2 = pygame.image.load('assets/start_blur.png')
-menu_bg = pygame.image.load('assets/menu_bg.png')
-over_bg = pygame.image.load('assets/over_bg.png')
-
-#pots/items
-h_pot = pygame.image.load('assets/hpot.png')
+bg = pygame.image.load('assets/bg.png').convert_alpha()
+start_bg = pygame.image.load('assets/start_bg.png').convert_alpha()
+start_bg2 = pygame.image.load('assets/start_blur.png').convert_alpha()
+menu_bg = pygame.image.load('assets/menu_bg.png').convert_alpha()
+over_bg = pygame.image.load('assets/over_bg.png').convert_alpha()
 
 #player and enemy
-p = pygame.image.load('assets/p.png')
-a = pygame.image.load('assets/aliens/a1.png')
-a2 = pygame.image.load('assets/aliens/a2.png')
+p = pygame.image.load('assets/p.png').convert_alpha()
+a = pygame.image.load('assets/aliens/a1.png').convert_alpha()
+a2 = pygame.image.load('assets/aliens/a2.png').convert_alpha()
 
 #bullet
-b = pygame.image.load('assets/bullet.png')
+b = pygame.image.load('assets/bullet.png').convert_alpha()
 
 #laser/log
-l1 = pygame.image.load('assets/log1.png')
-l2 = pygame.image.load('assets/log2.png')
+l1 = pygame.image.load('assets/log1.png').convert_alpha()
+l2 = pygame.image.load('assets/log2.png').convert_alpha()
 
 rockRandom = []
 for i in range(1,7):
-	rockChoose = pygame.image.load(f'assets/rocks/r{i}.png')
+	rockChoose = pygame.image.load(f'assets/rocks/r{i}.png').convert_alpha()
 	rockRandom.append(rockChoose)
 
 class Button():
@@ -102,29 +94,6 @@ play_overButton = Button(bP, 600, 450)
 quit_overButton = Button(bQ, 600, 530)
 play_pauseButton = Button(bP, 600, 430)
 quit_pauseButton = Button(bQ, 600, 520)
-
-class HealthPot(pygame.sprite.Sprite):
-	def __init__(self, x, y):
-		pygame.sprite.Sprite.__init__(self)
-		self.image = h_pot
-		self.rect = self.image.get_rect()
-		self.rect.center = (x,y)
-
-	def update(self):
-
-		collisionPlayer = pygame.Rect.colliderect(self.rect, player.rect)
-		if collisionPlayer:
-			if player.lives < 3:  
-				player.lives += 1
-				health_potList.remove(self)
-
-
-	def show(self):	
-		window.blit(self.image, (self.rect.x, self.rect.y))
-
-for o in range(n_hP):
-	hPot = HealthPot(random.randint(100, 500), random.randint(200, 600))
-	health_potList.append(hPot)
 
 class Player(pygame.sprite.Sprite):
 	def __init__(self, x, y, scale, location):
@@ -225,7 +194,7 @@ player = Player(600, 400, 1, 4)
 
 lives = []
 for x in range(4):
-	healthImage = pygame.image.load(f'assets/health/{x}.png')
+	healthImage = pygame.image.load(f'assets/health/{x}.png').convert_alpha()
 	lives.append(healthImage)
 
 class HealthBar():
@@ -268,13 +237,13 @@ class Alien(pygame.sprite.Sprite):
 		collisionsRock = pygame.sprite.spritecollide(self, rockGroup, False)
 		for j in collisionsRock:      
 				self.kill()
-				alienList.remove(alien) 
+				alienList.remove(self) 
 
 	def show(self):
 		window.blit(self.image, (self.rect.x, self.rect.y))
 
 for j in range(nA):
-	alien = Alien(random.randint(1200, 1400), (random.randint(70, 680)), 3)
+	alien = Alien(random.randint(1200, 1400), (random.randint(90, 680)), 3)
 	alienList.append(alien)
 
 class BlueAlien(pygame.sprite.Sprite):
@@ -307,14 +276,14 @@ class BlueAlien(pygame.sprite.Sprite):
 			collisionsRock = pygame.sprite.spritecollide(self, rockGroup, False)
 			for m in collisionsRock:      
 				self.kill()
-				blue_alienList.remove(alienBlue) 
+				blue_alienList.remove(self) 
 
 	def show(self):
 		if self.chance == 2:
 			window.blit(self.image, (self.rect.x, self.rect.y))
 
 for k in range(n_bA):
-	alienBlue = BlueAlien(random.randint(1200, 1400), (random.randint(70, 680)), 3)
+	alienBlue = BlueAlien(random.randint(1200, 1400), (random.randint(90, 680)), 3)
 	blue_alienList.append(alienBlue)
 
 class Log(pygame.sprite.Sprite):
@@ -326,7 +295,7 @@ class Log(pygame.sprite.Sprite):
 		#self.current_sprite = 0
 		#self.image = self.sprites[self.current_sprite]
 		self.image = l1
-		self.image2 = pygame.image.load('assets/opening.png')
+		self.image2 = pygame.image.load('assets/opening.png').convert_alpha()
 		self.rect = self.image.get_rect()
 		self.rect2 = self.image2.get_rect()
 		self.rect.center = (x,y)
@@ -388,7 +357,7 @@ class Rock(pygame.sprite.Sprite):
 rockGroup = pygame.sprite.Group()
 
 rockList = []
-for i in range(3):
+for i in range(1,4):
 	x = random.randint(60, 1030)
 	y = random.randint(70, 630)
 	rock = Rock(x, y)
@@ -401,189 +370,186 @@ for i in range(3):
 		rockList.append(rock)
 		rockGroup.add(rock)
 
-moveR = False
-moveL = False
-moveU = False
-moveD = False
-shoot = False
 
-jump = False
 playerTurn = False
 
 #game loop
-while True: 
+def main():
+ 
+	global lvl, nA, n_bA, alienList, blue_alienList, health_potList, aliensKilled, alien, alienBlue, log, player
 
-	if gameStart == False:
-		window.blit(start_bg2, (0, 0))
-		menu("FROM ANOTHER WORLD", font, mColor, 360, 270)
+	#game variables
+	gamePause = False 
+	gameOver = False
+	gameStart = False 
 
-		if playButton.draw():
-			gameStart = True
+	moveR = False
+	moveL = False
+	moveU = False
+	moveD = False
+	shoot = False
 
-		if quitButton.draw():
-			pygame.quit()
-			sys.exit()
+	while True: 
 
-	if gameOver == True: 
-		gameStart = False
-		window.blit(over_bg, (0, 0))
-		menu("YOU DIED...", font, mColor, 500, 250)
-		menu("GAME OVER", font, mColor, 480, 330)
+		if gameStart == False:
+			window.blit(start_bg2, (0, 0))
+			menu("FROM ANOTHER WORLD", font, mColor, 360, 270)
 
-		#if play_overButton.draw():
-			#gameStart = True
+			if playButton.draw():
+				gameStart = True
 
-		if quit_overButton.draw():
-			pygame.quit()
-			sys.exit()
-
-	if gamePause == True:
-		if gameOver == True:
-			pass
-		else:
-			window.blit(menu_bg, (0, 0))
-			menu("PAUSE MENU", font, mColor, 470, 300)
-
-			if play_pauseButton.draw():
-				gamePause = False
-
-			if quit_pauseButton.draw():
+			if quitButton.draw():
 				pygame.quit()
 				sys.exit()
 
-	if gameStart == True and gamePause == False:
-
-		window.blit(bg, (0, 0))
-		
-		menu(f"Direction: {player.directionx, player.directiony}", font3, mColor, 975, 20)
-
-		menu(f"Location: {player.rect.x, player.rect.y}", font3, mColor, 75, 20)
-		menu(f"tap SPACE to shoot", font3, mColor, 520, 20)
-
-		HEALTH.show()
-	
-		menu(f"ALIENS KILLED: {aliensKilled}", font3, mColor, 390, 745)
-		menu(f"LEVEL: {lvl}", font3, mColor, 720, 745)
-
-		if player.rate == 0:
-			menu(f"Fire Rate: ready", font3, mColor, 945, 745)
-		else:
-			menu(f"Fire Rate: {player.rate}", font3, mColor, 945, 745)
-
-		if len(alienList) == 0:
-			lvl += 1
-			nA += 1
-			n_bA += 1
-			n_hP += 1
-			for j in range(nA):
-				alien = Alien(random.randint(1200, 1400), (random.randint(70, 680)), 2)
-				alienList.append(alien)
-
-			for k in range(n_bA):
-				alienBlue = BlueAlien(random.randint(1200, 1400), (random.randint(70, 680)), 3)
-				blue_alienList.append(alienBlue)
-			
-			for o in range(n_hP):
-				hPot = HealthPot(random.randint(100, 500), random.randint(200, 600))
-				health_potList.append(hPot)
-
-			log.update()
-		
-		if len(health_potList) > 4:
-			for hPot in health_potList:
-				health_potList.remove(hPot)
-
-		rockGroup.draw(window)
-		rockGroup.update()
-
-		bulletGroup.draw(window)
-		bulletGroup.update()
-
-		log.show()
-		log.moveLR()
-		if log.rect2.x >= 1080 and log.rect.x >= 1080:
-			log.moveRL()
-			#print(log.rect.x, log.rect2.x)
-		
-		player.update()
-		player.show()
-		player.move(moveR, moveL, moveU, moveD)
-
-		for hPot in health_potList:
-			hPot.show()
-			hPot.update()
-
-		for alien in alienList:
-			alien.show()
-			alien.update()
-			alien.move()
-			if player.lives > 0:
-				if alien.rect.x + alien.image.get_width() < 64: 
-						player.lives -= 1
-						alienList.remove(alien)
-
-		for alienBlue in blue_alienList:
-			alienBlue.show()
-			alienBlue.update()
-			alienBlue.move()
-
-			if player.lives > 0:
-				if alienBlue.rect.x + alienBlue.image.get_width() < 64: 
-					player.lives -= 1
-					blue_alienList.remove(alienBlue)
-
-		if player.lives <= 3 and player.lives > 0:
-			if shoot: 
-				comb = []
-				comb.append(player.directionx)
-				comb.append(player.directiony)
-				#print(comb) 
-				player.shoot()
-
-	for event in pygame.event.get():
-		if event.type == QUIT:
-			pygame.quit()
-			sys.exit()
-		
-		if player.lives <= 0:
-			gameOver = True
+		if gameOver == True: 
 			gameStart = False
+			window.blit(over_bg, (0, 0))
+			menu("YOU DIED...", font, mColor, 500, 250)
+			menu("GAME OVER", font, mColor, 480, 330)
 
-		if event.type == KEYDOWN:
-			if event.key == K_ESCAPE:
-				gamePause = True
-			if event.key == K_e:
-				jump = True
-			if event.key == K_SPACE:
-				shoot = True
-			if event.key == K_RIGHT or event.key == K_d:
-				moveR = True
-			if event.key == K_LEFT or event.key == K_a:
-				moveL = True
-			if event.key == K_UP or event.key == K_w:
-				moveU = True
-			if event.key == K_DOWN or event.key == K_s:
-				moveD = True
+			#if play_overButton.draw():
+				#gameStart = True
 
-		if event.type == KEYUP:
-			if event.key == K_e:
-				jump = False
-			if event.key == K_SPACE:
-				shoot = False
-			if event.key == K_RIGHT or event.key == K_d:
-				moveR = False
-			if event.key == K_LEFT or event.key == K_a:
-				moveL = False
-			if event.key == K_UP or event.key == K_w:
-				moveU = False
-			if event.key == K_DOWN or event.key == K_s:
-				moveD = False
+			if quit_overButton.draw():
+				pygame.quit()
+				sys.exit()
 
-	pygame.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))
-	cX,cY = pygame.mouse.get_pos()
-	pos = [cX, cY]
-	window.blit(cursor, pos)
-	
-	pygame.display.update()
-	clock.tick(60)
+		if gamePause == True:
+			if gameOver == True:
+				pass
+			else:
+				window.blit(menu_bg, (0, 0))
+				menu("PAUSE MENU", font, mColor, 470, 300)
 
+				if play_pauseButton.draw():
+					gamePause = False
+
+				if quit_pauseButton.draw():
+					pygame.quit()
+					sys.exit()
+
+		if gameStart == True and gamePause == False:
+
+			window.blit(bg, (0, 0))
+
+			clock.tick()
+			menu(f"FPS: {int(clock.get_fps())}", font3, mColor, 75, 20)
+
+			HEALTH.show()
+		
+			menu(f"ALIENS KILLED: {aliensKilled}", font3, mColor, 390, 745)
+			menu(f"LEVEL: {lvl}", font3, mColor, 720, 745)
+
+			if player.rate == 0:
+				menu(f"Fire Rate: ready", font3, mColor, 945, 745)
+			else:
+				menu(f"Fire Rate: {player.rate}", font3, mColor, 945, 745)
+
+			if len(alienList) == 0:
+				lvl += 1
+				nA += 1
+				n_bA += 1
+
+				for j in range(nA):
+					alien = Alien(random.randint(1200, 1400), (random.randint(90, 680)), 2)
+					alienList.append(alien)
+
+				for k in range(n_bA):
+					alienBlue = BlueAlien(random.randint(1200, 1400), (random.randint(90, 680)), 3)
+					blue_alienList.append(alienBlue)
+
+				log.update()
+			
+			if len(health_potList) > 4:
+				for hPot in health_potList:
+					health_potList.remove(hPot)
+
+			rockGroup.draw(window)
+			rockGroup.update()
+
+			bulletGroup.draw(window)
+			bulletGroup.update()
+
+			log.show()
+			log.moveLR()
+			if log.rect2.x >= 1080 and log.rect.x >= 1080:
+				log.moveRL()
+				#print(log.rect.x, log.rect2.x)
+			
+			player.update()
+			player.show()
+			player.move(moveR, moveL, moveU, moveD)
+
+
+			for alien in alienList:
+				alien.show()
+				alien.update()
+				alien.move()
+				if player.lives > 0:
+					if alien.rect.x + alien.image.get_width() < 64: 
+							player.lives -= 1
+							alienList.remove(alien)
+
+			for alienBlue in blue_alienList:
+				alienBlue.show()
+				alienBlue.update()
+				alienBlue.move()
+
+				if player.lives > 0:
+					if alienBlue.rect.x + alienBlue.image.get_width() < 64: 
+						player.lives -= 1
+						blue_alienList.remove(alienBlue)
+
+			if player.lives <= 3 and player.lives > 0:
+				if shoot: 
+					comb = []
+					comb.append(player.directionx)
+					comb.append(player.directiony)
+					#print(comb) 
+					player.shoot()
+
+		for event in pygame.event.get():
+			if event.type == QUIT:
+				pygame.quit()
+				sys.exit()
+			
+			if player.lives <= 0:
+				gameOver = True
+				gameStart = False
+
+			if event.type == KEYDOWN:
+				if event.key == K_ESCAPE:
+					gamePause = True
+				if event.key == K_SPACE:
+					shoot = True
+				if event.key == K_RIGHT or event.key == K_d:
+					moveR = True
+				if event.key == K_LEFT or event.key == K_a:
+					moveL = True
+				if event.key == K_UP or event.key == K_w:
+					moveU = True
+				if event.key == K_DOWN or event.key == K_s:
+					moveD = True
+
+			if event.type == KEYUP:
+				if event.key == K_SPACE:
+					shoot = False
+				if event.key == K_RIGHT or event.key == K_d:
+					moveR = False
+				if event.key == K_LEFT or event.key == K_a:
+					moveL = False
+				if event.key == K_UP or event.key == K_w:
+					moveU = False
+				if event.key == K_DOWN or event.key == K_s:
+					moveD = False
+
+		pygame.mouse.set_cursor((8,8),(0,0),(0,0,0,0,0,0,0,0),(0,0,0,0,0,0,0,0))
+		cX,cY = pygame.mouse.get_pos()
+		pos = [cX, cY]
+		window.blit(cursor, pos)
+		
+		pygame.display.update()
+		clock.tick(60)
+
+main()
