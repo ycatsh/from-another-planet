@@ -7,7 +7,7 @@ clock = pygame.time.Clock()
 pygame.init()
 
 windowSize = (1200, 800)
-window = pygame.display.set_mode((windowSize), pygame.NOFRAME)
+window = pygame.display.set_mode((windowSize), pygame.NOFRAME, vsync=1)
 
 #icons
 icon = pygame.image.load('assets/icon.png').convert_alpha()
