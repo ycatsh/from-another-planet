@@ -129,7 +129,7 @@ class Player(pygame.sprite.Sprite):
 		collisionsRock = pygame.sprite.spritecollide(self, rockList, False)
 		for j in collisionsRock:      
 			if self.lives != 0:  
-				self.lives -= 6
+				self.lives = 0
 				self.kill()
 
 		collisionsLaser = pygame.Rect.colliderect(self.rect, laser.rect)
@@ -137,7 +137,7 @@ class Player(pygame.sprite.Sprite):
 			#print(log.pos, self.rect.y) 
 			if self.rect.y < laser.pos - 48 or self.rect.y > laser.pos + 48:
 				if self.lives != 0:  
-					self.lives -= 1
+					self.lives = 0
 					self.kill()
 			else:
 				pass
@@ -389,8 +389,15 @@ class Rock(pygame.sprite.Sprite):
 	def show(self):
 		if rock.rect.x < 1300 and rock.rect.x > -100 and rock.rect.y > 50 and rock.rect.y < 700:
 			window.blit(self.image, (self.rect.x, self.rect.y))
+	
+	def collide(self):
 
-for i in range(1,6):
+		collisionsRock = pygame.sprite.spritecollide(self, rockList, False)
+		for j in collisionsRock:       
+				self.kill()
+				rockList.remove(rock)
+
+for i in range(1,3):
 	x = random.randint(-1000, 1300)
 	y = random.randint(1000, 1300)
 
