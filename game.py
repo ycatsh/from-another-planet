@@ -387,7 +387,7 @@ class Rock(pygame.sprite.Sprite):
 		self.rect = self.rockSurface.get_rect(center = self.rect.center)
 
 	def show(self):
-		if rock.rect.x < 1300 and rock.rect.x > -100 and rock.rect.y > 50 and rock.rect.y < 760:
+		if rock.rect.x < 1300 and rock.rect.x > -100 and rock.rect.y > 50 and rock.rect.y < 700:
 			window.blit(self.image, (self.rect.x, self.rect.y))
 
 for i in range(1,6):
