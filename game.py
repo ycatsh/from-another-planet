@@ -27,15 +27,17 @@ def menu(text, font, mColor, x, y):
 
 
 lvl = 1
+aliensKilled = 0
 nA = 4 #number of aliens every level; level 1: 4
 n_bA = 2 #number of blue aliens every level
+n_bgA = 1 #number of big aliens every level 
 n_hP = 0 #number of health pots 
 
 alienList = []
 blue_alienList = []
 laserList = []
-aliensKilled = 0
 rockList = []
+big_alienList = []
 
 #cursor 
 cursor = pygame.image.load('assets/cursor.png').convert_alpha()
@@ -51,9 +53,16 @@ over_bg = pygame.image.load('assets/over_bg.png').convert_alpha()
 p = pygame.image.load('assets/p.png').convert_alpha()
 a = pygame.image.load('assets/aliens/a1.png').convert_alpha()
 a2 = pygame.image.load('assets/aliens/a2.png').convert_alpha()
+a3 = []
+for l in range(3):
+	img = pygame.image.load(f'assets/aliens/big/aB{l}.png').convert_alpha()
+	a3.append(img)
 
 #bullet
 b = pygame.image.load('assets/bullet.png').convert_alpha()
+
+#bomb 
+bomb = pygame.image.load('assets/bullet.png').convert_alpha()
 
 #laser
 l1 = pygame.image.load('assets/laser1.png').convert_alpha()
@@ -132,6 +141,12 @@ class Player(pygame.sprite.Sprite):
 				self.lives = 0
 				self.kill()
 
+		collisionsBig = pygame.sprite.spritecollide(self, big_alienList, False)
+		for l in collisionsBig:
+			if self.lives != 0:  
+				self.lives -= 1
+				self.kill()
+
 		collisionsLaser = pygame.Rect.colliderect(self.rect, laser.rect)
 		if collisionsLaser:
 			#print(log.pos, self.rect.y) 
@@ -151,22 +166,25 @@ class Player(pygame.sprite.Sprite):
 			self.directionx = 1
 			self.flip = True
 			y = 0
+			
 		if moveL:
 			x = -self.location
 			self.directionx = -1
 			self.flip = False 
 			y = 0
+			
 		if moveU: 
 			y = -self.location
 			self.directiony = 1
 			self.flip = True
 			x = 0
+			
 		if moveD:
 			y = self.location
 			self.directiony = -1
 			self.flip = False
 			x = 0
-			
+
 		if self.rect.bottom + y > 740:
 			y = 740 - self.rect.bottom
 		
@@ -231,15 +249,16 @@ class Alien(pygame.sprite.Sprite):
 
 		for k in collisionsBullet:   
 			if player.lives > 0:
-				self.kill()
 				alienList.remove(alien) 
 				bulletGroup.remove(bullet)
 				aliensKilled += 1
 
 		collisionsRock = pygame.sprite.spritecollide(self, rockList, False)
-		for j in collisionsRock:      
-				self.kill()
-				alienList.remove(self) 
+		for j in collisionsRock:    
+			try:  
+				alienList.remove(alien)
+			except ValueError:
+				pass
 
 	def show(self):
 		window.blit(self.image, (self.rect.x, self.rect.y))
@@ -269,16 +288,21 @@ class BlueAlien(pygame.sprite.Sprite):
 			collisions_blueBullet = pygame.sprite.spritecollide(self, bulletGroup, False)
 
 			for l in collisions_blueBullet: 
-				if player.lives > 0:  
-					self.kill()
-					blue_alienList.remove(alienBlue) 
+				if player.lives > 0: 
+					try: 
+						blue_alienList.remove(alienBlue)
+					except ValueError:
+						pass 
 					bulletGroup.remove(bullet)
 					aliensKilled += 1
 
 			collisionsRock = pygame.sprite.spritecollide(self, rockList, False)
-			for m in collisionsRock:      
-				self.kill()
-				blue_alienList.remove(self) 
+			for m in collisionsRock:   
+				try:   
+					alienList.remove(alienBlue) 
+				except ValueError:
+					pass
+
 
 	def show(self):
 		if self.chance == 2:
@@ -287,6 +311,58 @@ class BlueAlien(pygame.sprite.Sprite):
 for k in range(n_bA):
 	alienBlue = BlueAlien(random.randint(1400, 1600), (random.randint(90, 680)), 3)
 	blue_alienList.append(alienBlue)
+
+class BigAlien(pygame.sprite.Sprite):
+	def __init__(self, x, y, location):
+		pygame.sprite.Sprite.__init__(self)
+		self.lives = 2
+		self.image = a3[self.lives]
+		self.rect = self.image.get_rect()
+		self.rect.center = (x,y)
+		self.location = location
+		self.speed = 2
+		self.chance = random.randint(1,6)
+
+	def move(self):
+		if lvl > 4:
+			if self.chance == 3:
+				self.rect.x -= self.speed
+	
+	def update(self):
+		if self.chance == 3:
+			global aliensKilled 
+
+			collisions_bigBullet = pygame.sprite.spritecollide(self, bulletGroup, False)
+
+			for l in collisions_bigBullet: 
+				if player.lives > 0:  
+					self.lives -= 1
+					bulletGroup.remove(bullet)
+					if self.lives <=-1:
+						try:
+							big_alienList.remove(alienBig) 
+						except ValueError:
+							pass
+						bulletGroup.remove(bullet)
+						aliensKilled += 1
+
+			collisionsRock = pygame.sprite.spritecollide(self, rockList, False)
+			for m in collisionsRock:  
+				self.lives -= 1
+				if self.lives <=-1:
+					try:
+						big_alienList.remove(alienBig) 
+					except ValueError:
+						pass
+
+	def show(self):
+		if lvl > 4:
+			if self.chance == 3:
+				window.blit(a3[self.lives], (self.rect.x, self.rect.y))
+
+for l in range(n_bgA):
+	alienBig = BigAlien(random.randint(1400, 1600), (random.randint(90, 680)), 2)
+	big_alienList.append(alienBig)
 
 class Laser(pygame.sprite.Sprite):
 	def __init__(self, x, y, location):
@@ -329,7 +405,6 @@ class Laser(pygame.sprite.Sprite):
 
 laser = Laser(1, 400, 3)
 
-
 class Bullet(pygame.sprite.Sprite):
 	def __init__(self, x, y, directionx):
 		pygame.sprite.Sprite.__init__(self)
@@ -349,8 +424,15 @@ class Bullet(pygame.sprite.Sprite):
 
 bulletGroup = pygame.sprite.Group()
 
+class Bomb(pygame.sprite.Sprite):
+	def __init__(self, x, y, location):
+		pygame.sprite.Sprite.__init__(self)
+		self.image = bomb
+		self.rect = self.image.get_rect()
+		self.rect.center = (x,y)
+
 class Rock(pygame.sprite.Sprite):
-	def __init__(self, x, y, location, angle):
+	def __init__(self, x, y, location):
 		pygame.sprite.Sprite.__init__(self)
 		self.image = random.choice(rockRandom)
 		self.rect = self.image.get_rect()
@@ -358,8 +440,6 @@ class Rock(pygame.sprite.Sprite):
 		self.velocity = random.randint(1,6)
 		self.location = location
 		self.chanceV = random.randint(1, 2)
-		self.angle = 0
-		self.rotate(angle)
 
 	def update(self):
 		x = 0 
@@ -367,13 +447,10 @@ class Rock(pygame.sprite.Sprite):
 
 		if self.chanceV == 1: 
 			y = -self.location
-
 			x = self.location
-
 
 		if self.chanceV == 2:
 			y = self.location
-
 			x = self.location
 
 		if self.rect.y + y > 1300:
@@ -382,32 +459,21 @@ class Rock(pygame.sprite.Sprite):
 		self.rect.x += x
 		self.rect.y += y
 
-	def rotate(self, angle):
-		self.rockSurface = pygame.transform.rotate(self.image, self.angle)
-		self.rect = self.rockSurface.get_rect(center = self.rect.center)
-
 	def show(self):
 		if rock.rect.x < 1300 and rock.rect.x > -100 and rock.rect.y > 50 and rock.rect.y < 700:
 			window.blit(self.image, (self.rect.x, self.rect.y))
-	
-	def collide(self):
 
-		collisionsRock = pygame.sprite.spritecollide(self, rockList, False)
-		for j in collisionsRock:       
-				self.kill()
-				rockList.remove(rock)
-
-for i in range(1,3):
+for i in range(2,4):
 	x = random.randint(-1000, 1300)
 	y = random.randint(1000, 1300)
 
-	rock = Rock(x, y, 2, 45)
+	rock = Rock(x, y, 2)
 	rockList.append(rock)
 
 	if x <= 600+100 and x >= 600-100 and y <= 400+100 and y >= 400-100:
 		x += random.randint(120, 140)
 		y += random.randint(120, 140)
-		rock = Rock(x, y, random.randint(1,3), 45)
+		rock = Rock(x, y, random.randint(1,3))
 		rockList.append(rock)
 
 playerTurn = False
@@ -415,7 +481,7 @@ playerTurn = False
 #game loop
 def main():
  
-	global lvl, nA, n_bA, alienList, blue_alienList, health_potList, aliensKilled, alien, alienBlue, laser, player, laserNUM, rock
+	global lvl, nA, n_bA, n_bgA, alienList, blue_alienList, big_alienList, aliensKilled, alien, alienBlue, alienBig, laser, player, laserNUM, rock
 
 	#game variables
 	gamePause = False 
@@ -492,6 +558,10 @@ def main():
 				lvl += 1
 				nA += 1
 				n_bA += 1
+				if lvl > 4:
+					n_bgA += 1
+					if n_bgA > 3:
+						n_bgA = 0
 
 				for j in range(nA):
 					alien = Alien(random.randint(1400, 1600), (random.randint(90, 680)), 2)
@@ -500,6 +570,11 @@ def main():
 				for k in range(n_bA):
 					alienBlue = BlueAlien(random.randint(1400, 1600), (random.randint(90, 680)), 3)
 					blue_alienList.append(alienBlue)
+				
+				if lvl > 4:
+					for l in range(n_bgA):
+						alienBig = BigAlien(random.randint(1400, 1600), (random.randint(90, 680)), 2)
+						big_alienList.append(alienBig)
 				
 				laser.update()
 
@@ -512,24 +587,23 @@ def main():
 			for rock in rockList: 
 				rock.show()
 				rock.update()
-				rock.rotate(45)
 
 				if player.lives > 0:
 
 					if len(rockList) < 3: 
-						for i in range(1,6):
+						for i in range(1,random.randint(4,6)):
 							x = random.randint(-1000, 1300)
 							y = random.randint(1000, 1500)
 
-							rock = Rock(x, y, random.randint(1,3), 45)
+							rock = Rock(x, y, random.randint(1,3))
 							rockList.append(rock)
 
 							if x <= 600+100 and x >= 600-100 and y <= 400+100 and y >= 400-100:
 								x += random.randint(120, 140)
 								y += random.randint(120, 140)
-								rock = Rock(x, y, random.randint(1,3), 45)
+								rock = Rock(x, y, random.randint(1,3))
 								rockList.append(rock)
-
+	
 				if rock.rect.x > 2000 or rock.rect.x < -100 and rock.rect.y > 2000 or rock.rect.y < -100:
 					rockList.remove(rock)
 
@@ -559,6 +633,16 @@ def main():
 					if alienBlue.rect.x + alienBlue.image.get_width() < 64: 
 						player.lives -= 1
 						blue_alienList.remove(alienBlue)
+
+			for alienBig in big_alienList:
+				alienBig.show()
+				alienBig.update()
+				alienBig.move()
+
+				if player.lives > 0:
+					if alienBig.rect.x + alienBig.image.get_width() < 64: 
+						player.lives -= 1
+						big_alienList.remove(alienBig)
 
 			if player.lives <= 6 and player.lives > 0:
 				if shoot: 
