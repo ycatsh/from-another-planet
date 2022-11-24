@@ -123,29 +123,10 @@ class Player(pygame.sprite.Sprite):
 		if self.rate > 0:
 			self.rate -= 1
 
-		collisionsAlien = pygame.sprite.spritecollide(self, alienList, False)
-		for h in collisionsAlien:      
-			if self.lives != 0:  
-				self.lives -= 1
-				self.kill()
-
-		collisionsBlue = pygame.sprite.spritecollide(self, blue_alienList, False)
-		for i in collisionsBlue:
-			if self.lives != 0:  
-				self.lives -= 1
-				self.kill()
-
 		collisionsRock = pygame.sprite.spritecollide(self, rockList, False)
 		for j in collisionsRock:      
 			if self.lives != 0:  
 				self.lives = 0
-				self.kill()
-
-		collisionsBig = pygame.sprite.spritecollide(self, big_alienList, False)
-		for l in collisionsBig:
-			if self.lives != 0:  
-				self.lives -= 1
-				self.kill()
 
 		collisionsLaser = pygame.Rect.colliderect(self.rect, laser.rect)
 		if collisionsLaser:
@@ -153,7 +134,6 @@ class Player(pygame.sprite.Sprite):
 			if self.rect.y < laser.pos - 48 or self.rect.y > laser.pos + 48:
 				if self.lives != 0:  
 					self.lives = 0
-					self.kill()
 			else:
 				pass
 
@@ -253,6 +233,12 @@ class Alien(pygame.sprite.Sprite):
 				bulletGroup.remove(bullet)
 				aliensKilled += 1
 
+		
+		collisionsPlayer = pygame.Rect.colliderect(self.rect, player.rect)
+		if collisionsPlayer: 
+			alienList.remove(alien)
+			player.lives -= 1
+
 		collisionsRock = pygame.sprite.spritecollide(self, rockList, False)
 		for j in collisionsRock:    
 			try:  
@@ -296,13 +282,17 @@ class BlueAlien(pygame.sprite.Sprite):
 					bulletGroup.remove(bullet)
 					aliensKilled += 1
 
+			collisionsPlayer = pygame.Rect.colliderect(self.rect, player.rect)
+			if collisionsPlayer: 
+				blue_alienList.remove(alienBlue)
+				player.lives -= 1
+					
 			collisionsRock = pygame.sprite.spritecollide(self, rockList, False)
 			for m in collisionsRock:   
 				try:   
 					alienList.remove(alienBlue) 
 				except ValueError:
 					pass
-
 
 	def show(self):
 		if self.chance == 2:
@@ -345,6 +335,13 @@ class BigAlien(pygame.sprite.Sprite):
 							pass
 						bulletGroup.remove(bullet)
 						aliensKilled += 1
+
+			collisionsPlayer = pygame.Rect.colliderect(self.rect, player.rect)
+			if collisionsPlayer:
+				self.lives -= 1
+				if self.lives <=-1:
+					big_alienList.remove(alienBig)
+					player.lives -= 1
 
 			collisionsRock = pygame.sprite.spritecollide(self, rockList, False)
 			for m in collisionsRock:  
@@ -539,6 +536,10 @@ def main():
 
 		if gameStart == True and gamePause == False:
 
+			if player.lives <= 0:
+				gameOver = True
+				gameStart = False
+
 			for i in range(0, tiles):
 				window.blit(bg, (i*bg.get_width() + scroll, 0))
 
@@ -656,10 +657,6 @@ def main():
 			if event.type == QUIT:
 				pygame.quit()
 				sys.exit()
-			
-			if player.lives <= 0:
-				gameOver = True
-				gameStart = False
 
 			if event.type == KEYDOWN:
 				if event.key == K_ESCAPE:
