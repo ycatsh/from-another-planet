@@ -234,7 +234,7 @@ class Bullet(pygame.sprite.Sprite):
         window.blit(self.image, (self.rect.x, self.rect.y))
 
 
-def move():
+def bullet_move():
     sX, sY = pygame.mouse.get_pos()
 
     distanceX = sX - player.rect.x
@@ -251,12 +251,10 @@ def move():
             player.rect.centerx, player.rect.centery, speedX, speedY, player.directionx))
 
 
-def bullet_shoot():
+def bullet_check():
     if not len(bulletList) == 0:
         for bullet in bulletList:
-            if bullet.rect.x >= 0 and bullet.rect.x <= window.get_width() and bullet.rect.y >= 60 and bullet.rect.y <= window.get_height()-60:
-                bullet.update()
-            else:
+            if not bullet.rect.x >= 0 and bullet.rect.x <= window.get_width() and bullet.rect.y >= 60 and bullet.rect.y <= window.get_height()-60:
                 try:
                     bulletList.remove(bullet)
                 except ValueError:
@@ -372,7 +370,7 @@ class BigAlien(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.speed = 2
-        self.chance = random.randint(1, 6)
+        self.chance = random.randint(1, 4)
 
     def move(self):
         if lvl > 4:
@@ -674,7 +672,7 @@ def main():
                 n_bA += 1
                 if lvl > 4:
                     n_bgA += 1
-                    if n_bgA > 3:
+                    if n_bgA > 5:
                         n_bgA = 0
 
                 for _ in range(nA):
@@ -715,18 +713,18 @@ def main():
                 if rock.rect.x > window.get_width()+800 or rock.rect.x < -100 and rock.rect.y > window.get_height()+1200 or rock.rect.y < -100:
                     rockList.remove(rock)
 
-            for bullet in bulletList:
-                bullet.show()
-                bullet.update()
-
-            if player.lives <= 6 and player.lives > 0:
-                if shoot:
-                    move()
-                    bullet_shoot()
-
             player.update()
             player.show()
             player.move(moveR, moveL, moveU, moveD)
+
+            if player.lives <= 6 and player.lives > 0:
+                if shoot:
+                    bullet_move()
+                    bullet_check()
+
+            for bullet in bulletList:
+                bullet.update()
+                bullet.show()
 
             for alien in alienList:
                 alien.show()
