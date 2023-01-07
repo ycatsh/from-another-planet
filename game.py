@@ -42,6 +42,7 @@ particleColors = [(251, 0, 0)] #DEV
 
 # cursor
 cursor = pygame.image.load('assets/cursor.png').convert_alpha()
+crosshair = pygame.image.load('assets/crosshair.png').convert_alpha()
 
 # backgrounds
 bg = pygame.image.load('assets/bg.png').convert_alpha()
@@ -82,6 +83,18 @@ def menu(text, font, mColor, x, y):
     m = font.render(text, True, mColor)
     window.blit(m, (x, y))
 
+def show_cursor():
+    pygame.mouse.set_cursor((8, 8), (0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0))
+    cX, cY = pygame.mouse.get_pos()
+    pos = [cX, cY]
+    window.blit(cursor, pos)
+
+def change_cursor():
+    pygame.mouse.set_cursor((8, 8), (0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0))
+    cX, cY = pygame.mouse.get_pos()
+    pos = [cX, cY]
+    window.blit(crosshair, pos)
+
 class Button():
     def __init__(self, image, x, y):
         self.image = image
@@ -119,10 +132,9 @@ quit_pauseButton = Button(bQ, round(window.get_width()/2), round(window.get_heig
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y, scale, location):
+    def __init__(self, x, y, location):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.transform.scale(
-            p, (int(p.get_width()*scale), p.get_height() * scale))
+        self.image = p
         self.lives = 6
         self.flip = False
         self.directionx = 0
@@ -136,6 +148,14 @@ class Player(pygame.sprite.Sprite):
         if self.rate > 0:
             self.rate -= 1
 
+        mXY = pygame.mouse.get_pos()
+        angle = 360-math.atan2(mXY[1]-300, mXY[0]-400)*180/math.pi
+
+        image = self.image.copy()
+        self.rotated_image = pygame.transform .rotate(image, angle)
+
+        angle += 1 % 360 
+
         collisionsRock = pygame.sprite.spritecollide(self, rockList, False)
         for _ in collisionsRock:
             if self.lives != 0:
@@ -143,10 +163,7 @@ class Player(pygame.sprite.Sprite):
 
         collisionsLaser = pygame.Rect.colliderect(self.rect, laser.rect)
         if collisionsLaser:
-            if self.rect.y > laser.rect2.bottom:
-                if self.lives != 0:
-                    self.lives = 0
-            if self.rect.y > laser.rect2.bottom:
+            if self.rect.y < laser.pos -48 or self.rect.y > laser.pos + 48:
                 if self.lives != 0:
                     self.lives = 0
             else:
@@ -195,10 +212,10 @@ class Player(pygame.sprite.Sprite):
 
     def show(self):
         window.blit(pygame.transform.flip(
-            self.image, self.flip, False), self.rect)
+            self.rotated_image, False, False), self.rect)
 
 
-player = Player(round(window.get_width()/2), round(window.get_height()/2), 1, 5)
+player = Player(round(window.get_width()/2), round(window.get_height()/2), 5)
 
 lives = []
 for x in range(7):
@@ -228,7 +245,6 @@ class Bullet(pygame.sprite.Sprite):
         self.image = b
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-        self.speed = 8
         self.dx = dx
         self.dy = dy
 
@@ -248,8 +264,8 @@ def bullet_move():
 
     angle = math.atan2(distanceY, distanceX)
 
-    speedX = int(8 * math.cos(angle))
-    speedY = int(8 * math.sin(angle))
+    speedX = int(12 * math.cos(angle))
+    speedY = int(12 * math.sin(angle))
 
     if player.rate == 0:
         player.rate = 30
@@ -290,7 +306,7 @@ class AlienBullet(pygame.sprite.Sprite):
 
 def alien_shoot():
     global alien_bullet 
-    freq = random.randint(75, 200)
+    freq = random.randint(75, 175)
 
     pX, pY = player.rect.x, player.rect.y
 
@@ -299,8 +315,8 @@ def alien_shoot():
 
     angle = math.atan2(distanceY, distanceX)
 
-    speedX = int(6 * math.cos(angle))
-    speedY = int(6 * math.sin(angle))
+    speedX = int(10 * math.cos(angle))
+    speedY = int(10 * math.sin(angle))
 
     if alienShoot.rate == 0:
         alienShoot.rate = freq
@@ -691,7 +707,6 @@ def main():
 
         if gameStart == False:
             window.blit(start_bg, (0, 0))
-
             if playButton.draw():
                 gameStart = True
 
@@ -728,6 +743,8 @@ def main():
 
         if gameStart == True and gamePause == False:
 
+            change_cursor()
+
             if player.lives <= 0:
                 gameOver = True
                 gameStart = False
@@ -753,9 +770,9 @@ def main():
                 n_bA += 1
 
                 if lvl > 2:
-                    n_sA += 1
-                    if n_sA > 5:
-                        n_sA = 1
+                    n_sA += 2
+                    if n_sA > 6:
+                        n_sA = 3
 
                 if lvl > 4:
                     n_bgA += 1
@@ -862,6 +879,9 @@ def main():
                         player.lives -= 1
                         shoot_alienList.remove(alienShoot)
 
+        else:
+            show_cursor()
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -870,8 +890,6 @@ def main():
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     gamePause = True
-                if event.key == K_SPACE:
-                    shoot = True
                 if event.key == K_RIGHT or event.key == K_d:
                     moveR = True
                 if event.key == K_LEFT or event.key == K_a:
@@ -881,9 +899,13 @@ def main():
                 if event.key == K_DOWN or event.key == K_s:
                     moveD = True
 
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                shoot = True
+
+            if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                shoot = False
+
             if event.type == KEYUP:
-                if event.key == K_SPACE:
-                    shoot = False
                 if event.key == K_RIGHT or event.key == K_d:
                     moveR = False
                 if event.key == K_LEFT or event.key == K_a:
@@ -893,11 +915,8 @@ def main():
                 if event.key == K_DOWN or event.key == K_s:
                     moveD = False
 
-        pygame.mouse.set_cursor(
-            (8, 8), (0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0))
-        cX, cY = pygame.mouse.get_pos()
-        pos = [cX, cY]
-        window.blit(cursor, pos)
+        if not gamePause and not gameOver and gameStart:
+            change_cursor()
 
         pygame.display.update()
         clock.tick(60)
