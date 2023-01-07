@@ -143,8 +143,10 @@ class Player(pygame.sprite.Sprite):
 
         collisionsLaser = pygame.Rect.colliderect(self.rect, laser.rect)
         if collisionsLaser:
-            #print(log.pos, self.rect.y)
-            if self.rect.y < laser.pos - 32 or self.rect.y > laser.pos + 32:
+            if self.rect.y > laser.rect2.bottom:
+                if self.lives != 0:
+                    self.lives = 0
+            if self.rect.y > laser.rect2.bottom:
                 if self.lives != 0:
                     self.lives = 0
             else:
@@ -176,17 +178,17 @@ class Player(pygame.sprite.Sprite):
             self.directiony = -1
             x = 0
 
-        if self.rect.bottom + y > window.get_height()-60:
-            y = window.get_height()-60 - self.rect.bottom
+        if self.rect.bottom + y > window.get_height()-81:
+            y = window.get_height()-81 - self.rect.bottom
 
-        if self.rect.top + y < 65:
+        if self.rect.top + y < 81:
             y = 5
 
-        if self.rect.left + x > window.get_width()-120:
-            x = window.get_width()-120 - self.rect.left
+        if self.rect.left + x > window.get_width()-20:
+            x = window.get_width()-20 - self.rect.left
 
-        if self.rect.right + x <= 120:
-            x = 120 - self.rect.right
+        if self.rect.right + x <= 20:
+            x = 20 - self.rect.right
 
         self.rect.x += x
         self.rect.y += y
@@ -288,7 +290,7 @@ class AlienBullet(pygame.sprite.Sprite):
 
 def alien_shoot():
     global alien_bullet 
-    freq = random.randint(75, 150)
+    freq = random.randint(75, 200)
 
     pX, pY = player.rect.x, player.rect.y
 
@@ -516,10 +518,10 @@ class Laser(pygame.sprite.Sprite):
         self.image2 = pygame.image.load('assets/opening.png').convert_alpha()
         self.rect = self.image.get_rect()
         self.rect2 = self.image2.get_rect()
+        self.pos = random.randint(350, window.get_height()-350)
         self.rect.center = (x, y)
-        self.rect2.center = (x, y)
+        self.rect2.center = (x, self.pos)
         self.speed = 2
-        self.pos = random.randint(200, 560)
 
     def update(self):
         slowdown = random.randint(1, 2)
@@ -536,7 +538,7 @@ class Laser(pygame.sprite.Sprite):
     def moveRL(self):
         self.rect.x = (self.rect.x * -1) + self.speed
         self.rect2.x = (self.rect2.x * -1) + self.speed
-        self.pos = random.randint(200, 560)
+        self.pos = random.randint(350, window.get_height()-350)
 
     def show(self):
         # disabling animation for now
@@ -579,7 +581,7 @@ class Rock(pygame.sprite.Sprite):
         self.rect.y += y
 
     def show(self):
-        if rock.rect.x < window.get_width()+100 and rock.rect.x > -100 and rock.rect.y > 50 and rock.rect.y < window.get_height()-100:
+        if rock.rect.x < window.get_width()+100 and rock.rect.x > -100 and rock.rect.y > 80 and rock.rect.y < window.get_height()-130:
             window.blit(self.image, (self.rect.x, self.rect.y))
 
 
