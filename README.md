@@ -9,6 +9,7 @@ Head to releases and download the latest version
 ### Source code 
 Download the repo and run the python file (you need the ``pygame`` module)
 
-![image](https://user-images.githubusercontent.com/91330011/211586465-996703e3-61b1-4f20-8a16-92a44d362602.png)
+### Screenshots 
 ![image](https://user-images.githubusercontent.com/91330011/211586484-cb580249-1dc3-4c79-b3f3-fbedf5afc676.png)
+![image](https://user-images.githubusercontent.com/91330011/211586465-996703e3-61b1-4f20-8a16-92a44d362602.png)
 
