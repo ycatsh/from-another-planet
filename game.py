@@ -56,8 +56,8 @@ a = pygame.image.load('assets/aliens/a1.png').convert_alpha()
 a2 = pygame.image.load('assets/aliens/a2.png').convert_alpha()
 a4 = pygame.image.load('assets/aliens/a4.png').convert_alpha()
 
-for l in range(3):
-    img = pygame.image.load(f'assets/aliens/big/aB{l}.png').convert_alpha()
+for i in range(3):
+    img = pygame.image.load(f'assets/aliens/big/aB{i}.png').convert_alpha()
     a3.append(img)
 
 # bullet
@@ -68,8 +68,7 @@ a_b = pygame.image.load('assets/aliens/a_b.png').convert_alpha()
 # bmb = pygame.image.load('assets/bomb.png').convert_alpha()
 
 # laser
-l1 = pygame.image.load('assets/laser1.png').convert_alpha()
-l2 = pygame.image.load('assets/laser2.png').convert_alpha()
+l = pygame.image.load('assets/laser.png').convert_alpha()
 
 rockRandom = []
 for i in range(1, 7):
@@ -163,11 +162,8 @@ class Player(pygame.sprite.Sprite):
 
         collisionsLaser = pygame.Rect.colliderect(self.rect, laser.rect)
         if collisionsLaser:
-            if self.rect.y < laser.pos -48 or self.rect.y > laser.pos + 48:
-                if self.lives != 0:
-                    self.lives = 0
-            else:
-                pass
+            if self.lives != 0:
+                self.lives = 0
 
     def move(self, moveR, moveL, moveU, moveD):
         x = 0
@@ -525,45 +521,40 @@ for _ in range(n_sA):
 class Laser(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
-        # self.sprites = [] #disabling animation for now
-        # self.sprites.append(l1)
-        # self.sprites.append(l2)
-        #self.current_sprite = 0
-        #self.image = self.sprites[self.current_sprite]
-        self.image = l1
-        self.image2 = pygame.image.load('assets/opening.png').convert_alpha()
+        self.image = l
         self.rect = self.image.get_rect()
-        self.rect2 = self.image2.get_rect()
-        self.pos = random.randint(350, window.get_height()-350)
+        #self.pos = random.randint(350, window.get_height()-350)
         self.rect.center = (x, y)
-        self.rect2.center = (x, self.pos)
-        self.speed = 2
+        self.speedx = 2
+        self.speedy = 2
+        self.directiony = random.choice([1, -1])
 
     def update(self):
         slowdown = random.randint(1, 2)
-        self.speed += lvl/8
+        self.speedx += lvl/8
+        self.speedy += lvl/50
 
-        if self.speed > 5.5:
+        if self.speedx > 5.5 or self.speedy > 5:
             if slowdown == 1:
-                self.speed = 3.5
+                self.speedx = 3.5
+                self.speedy = 3.5
 
     def moveLR(self):
-        self.rect.x += self.speed
-        self.rect2.x += self.speed
+        self.rect.x += self.speedx
+
+        if self.rect.top < 10:
+            self.directiony = 1
+        if self.rect.bottom > window.get_height()-10:
+            self.directiony = -1
+
+        self.rect.y += self.speedy * self.directiony
+
 
     def moveRL(self):
-        self.rect.x = (self.rect.x * -1) + self.speed
-        self.rect2.x = (self.rect2.x * -1) + self.speed
-        self.pos = random.randint(350, window.get_height()-350)
+        self.rect.x = (self.rect.x * -1) + self.speedx
 
     def show(self):
-        # disabling animation for now
-        #self.current_sprite += 0
-        # if self.current_sprite > 1:
-        #self.current_sprite = 0
-        #self.image = self.sprites[int(self.current_sprite)]
         window.blit(self.image, (self.rect.x, self.rect.y))
-        window.blit(self.image2, (self.rect2.x, self.pos))
 
 
 laser = Laser(1, round(window.get_height()/2))
@@ -597,12 +588,12 @@ class Rock(pygame.sprite.Sprite):
         self.rect.y += y
 
     def show(self):
-        if rock.rect.x < window.get_width()+100 and rock.rect.x > -100 and rock.rect.y > 80 and rock.rect.y < window.get_height()-130:
+        if rock.rect.x < window.get_width()+100 and rock.rect.x > -100 and rock.rect.y > 0 and rock.rect.y < window.get_height():
             window.blit(self.image, (self.rect.x, self.rect.y))
 
 
-for i in range(2, 4):
-    x = random.randint(-window.get_width()+200, window.get_width()+100)
+for i in range(2):
+    x = random.randint(-window.get_width()-200, window.get_width()+200)
     y = random.randint(window.get_height()-200, window.get_height()+100)
 
     rock = Rock(x, y, random.randint(1, 3))
@@ -756,14 +747,6 @@ def main():
             if abs(scroll) > bg.get_width():
                 scroll = 0
 
-            clock.tick()
-            menu(f"FPS: {int(clock.get_fps())}", font2, mColor, 75, 20)
-
-            HEALTH.show()
-
-            menu(f"ALIENS KILLED: {aliensKilled}", font2, mColor, window.get_width()-220, window.get_height()-50)
-            menu(f"LEVEL: {lvl}", font2, mColor, 50, window.get_height()-50)
-
             if len(alienList) == 0:
                 lvl += 1
                 nA += 1
@@ -801,9 +784,8 @@ def main():
 
             laser.show()
             laser.moveLR()
-            if laser.rect2.x >= window.get_width() and laser.rect.x >= window.get_width():
+            if laser.rect.x >= window.get_width()+200:
                 laser.moveRL()
-                #print(log.rect.x, log.rect2.x)
 
             for rock in rockList:
                 rock.show()
@@ -812,14 +794,14 @@ def main():
                 if player.lives > 0:
 
                     if len(rockList) < 3:
-                        for i in range(1, random.randint(4, 6)):
-                            x = random.randint(-window.get_width()+200, window.get_width()+100)
-                            y = random.randint(window.get_height()-200, window.get_height()+300)
+                        for i in range(random.randint(3, 5)):
+                            x = random.randint(-window.get_width()+200, window.get_width()+400)
+                            y = random.randint(window.get_height()-200, window.get_height()+100)
 
                             rock = Rock(x, y, random.randint(1, 3))
                             rockList.append(rock)
 
-                if rock.rect.x > window.get_width()+800 or rock.rect.x < -100 and rock.rect.y > window.get_height()+1200 or rock.rect.y < -100:
+                if rock.rect.x > window.get_width()+800 or rock.rect.x < -400 and rock.rect.y > window.get_height()+800 or rock.rect.y < -400:
                     rockList.remove(rock)
 
             player.update()
@@ -840,7 +822,7 @@ def main():
                 alien.update()
                 alien.move()
                 if player.lives > 0:
-                    if alien.rect.x + alien.image.get_width() < 64:
+                    if alien.rect.x + alien.image.get_width() < 10:
                         player.lives -= 1
                         alienList.remove(alien)
             
@@ -850,7 +832,7 @@ def main():
                 alienBlue.move()
 
                 if player.lives > 0:
-                    if alienBlue.rect.x + alienBlue.image.get_width() < 64:
+                    if alienBlue.rect.x + alienBlue.image.get_width() < 10:
                         player.lives -= 1
                         blue_alienList.remove(alienBlue)
 
@@ -860,7 +842,7 @@ def main():
                 alienBig.move()
 
                 if player.lives > 0:
-                    if alienBig.rect.x + alienBig.image.get_width() < 64:
+                    if alienBig.rect.x + alienBig.image.get_width() < 10:
                         player.lives -= 1
                         big_alienList.remove(alienBig)
 
@@ -878,6 +860,12 @@ def main():
                     if alienShoot.rect.x + alienShoot.image.get_width() < 64:
                         player.lives -= 1
                         shoot_alienList.remove(alienShoot)
+           
+            clock.tick()
+            menu(f"FPS: {int(clock.get_fps())}", font2, mColor, 75, 20)
+            HEALTH.show()
+            menu(f"ALIENS KILLED: {aliensKilled}", font2, mColor, window.get_width()-220, window.get_height()-50)
+            menu(f"LEVEL: {lvl}", font2, mColor, 50, window.get_height()-50)
 
         else:
             show_cursor()
