@@ -94,7 +94,7 @@ def change_cursor():
     pos = [cX, cY]
     window.blit(crosshair, pos)
 
-class Button():
+class Button:
     def __init__(self, image, x, y):
         self.image = image
         self.rect = self.image.get_rect()
@@ -130,7 +130,7 @@ play_pauseButton = Button(bP, round(window.get_width()/2), round(window.get_heig
 quit_pauseButton = Button(bQ, round(window.get_width()/2), round(window.get_height()/2)+140)
 
 
-class Player(pygame.sprite.Sprite):
+class Player:
     def __init__(self, x, y, location):
         pygame.sprite.Sprite.__init__(self)
         self.image = p
@@ -219,7 +219,7 @@ for x in range(7):
     lives.append(healthImage)
 
 
-class HealthBar():
+class HealthBar:
     def __init__(self, image, x, y, scale):
         width = image.get_width()
         height = image.get_height()
@@ -235,7 +235,7 @@ class HealthBar():
 HEALTH = HealthBar(lives[player.lives], round(window.get_width()/2), window.get_height()-45, 0.7)
 
 
-class Bullet(pygame.sprite.Sprite):
+class Bullet:
     def __init__(self, x, y, dx, dy):
         pygame.sprite.Sprite.__init__(self)
         self.image = b
@@ -260,13 +260,12 @@ def bullet_move():
 
     angle = math.atan2(distanceY, distanceX)
 
-    speedX = int(12 * math.cos(angle))
-    speedY = int(12 * math.sin(angle))
+    speedX = int(16 * math.cos(angle))
+    speedY = int(16 * math.sin(angle))
 
     if player.rate == 0:
-        player.rate = 30
-        bulletList.append(Bullet(
-            player.rect.centerx, player.rect.centery, speedX, speedY))
+        player.rate = 20
+        bulletList.append(Bullet(player.rect.centerx, player.rect.centery, speedX, speedY))
 
 def bullet_check():
     if not len(bulletList) == 0:
@@ -277,7 +276,10 @@ def bullet_check():
                 except ValueError:
                     pass
 
-class AlienBullet(pygame.sprite.Sprite):
+class Knife():
+    pass
+
+class AlienBullet:
     def __init__(self, x, y, dx, dy):
         pygame.sprite.Sprite.__init__(self)
         self.image = a_b
@@ -327,7 +329,7 @@ def alien_bullet_check():
                 except ValueError:
                     pass
 
-class Alien(pygame.sprite.Sprite):
+class Alien:
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = a
@@ -369,7 +371,7 @@ for _ in range(nA):
     alienList.append(alien)
 
 
-class BlueAlien(pygame.sprite.Sprite):
+class BlueAlien:
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = a2
@@ -414,7 +416,7 @@ for _ in range(n_bA):
     blue_alienList.append(alienBlue)
 
 
-class BigAlien(pygame.sprite.Sprite):
+class BigAlien:
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.lives = 2
@@ -465,7 +467,7 @@ for _ in range(n_bgA):
     big_alienList.append(alienBig)
 
 
-class ShootAlien(pygame.sprite.Sprite):
+class ShootAlien:
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = a4
@@ -518,12 +520,11 @@ for _ in range(n_sA):
     shoot_alienList.append(alienShoot)
 
 
-class Laser(pygame.sprite.Sprite):
+class Laser:
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = l
         self.rect = self.image.get_rect()
-        #self.pos = random.randint(350, window.get_height()-350)
         self.rect.center = (x, y)
         self.speedx = 2
         self.speedy = 2
@@ -532,12 +533,13 @@ class Laser(pygame.sprite.Sprite):
     def update(self):
         slowdown = random.randint(1, 2)
         self.speedx += lvl/8
-        self.speedy += lvl/50
+        self.speedy += lvl/12
 
-        if self.speedx > 5.5 or self.speedy > 5:
+        if self.speedx > 6 or self.speedy > 6:
             if slowdown == 1:
-                self.speedx = 3.5
-                self.speedy = 3.5
+                self.speedx = 3
+                self.speedy = 3
+
 
     def moveLR(self):
         self.rect.x += self.speedx
@@ -555,124 +557,58 @@ class Laser(pygame.sprite.Sprite):
 
     def show(self):
         window.blit(self.image, (self.rect.x, self.rect.y))
-
+        #pygame.draw.rect(window, (126, 14, 22), (self.rect.x, self.rect.y), special_flags=BLEND_RGB_ADD)
 
 laser = Laser(1, round(window.get_height()/2))
 
 
-class Rock(pygame.sprite.Sprite):
+class Rock:
     def __init__(self, x, y, speed):
         pygame.sprite.Sprite.__init__(self)
         self.image = random.choice(rockRandom)
+        self.tmp_image = self.image
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.speed = speed
-        self.chanceV = random.randint(1, 2)
+        self.angle = 10
+        self.directionx = random.choice([1, -1])
+        self.directiony = random.choice([1, -1])
 
     def update(self):
-        x = 0
-        y = 0
 
-        if self.chanceV == 1:
-            y = -self.speed
-            x = self.speed
+        self.tmp_image = pygame.transform.rotate(self.image, self.angle)
+        self.angle += 1%360
 
-        if self.chanceV == 2:
-            y = self.speed
-            x = self.speed
+        if self.rect.right < -random.randint(100, 300):
+            self.directionx = 1
 
-        if self.rect.y + y > 1300:
-            self.rect.y = -100
+        if self.rect.right > window.get_width()+random.randint(100, 300):
+            self.directionx = -1
 
-        self.rect.x += x
-        self.rect.y += y
+        if self.rect.top < -random.randint(100, 300):
+            self.directiony = 1
+
+        if self.rect.bottom > window.get_height()+random.randint(100, 300):
+            self.directiony = -1
+
+        self.rect.x += self.speed * self.directionx
+        self.rect.y += self.speed * self.directiony
+
+        collisionsLaser= pygame.Rect.colliderect(self.rect, laser.rect)
+        if collisionsLaser:
+            rockList.remove(self)
 
     def show(self):
-        if rock.rect.x < window.get_width()+100 and rock.rect.x > -100 and rock.rect.y > 0 and rock.rect.y < window.get_height():
-            window.blit(self.image, (self.rect.x, self.rect.y))
+        window.blit(self.tmp_image, (self.rect.x, self.rect.y))
 
 
-for i in range(2):
-    x = random.randint(-window.get_width()-200, window.get_width()+200)
-    y = random.randint(window.get_height()-200, window.get_height()+100)
+for i in range(4):
+    x = random.choice([random.randint(-window.get_width()+200, -window.get_width()+800), random.randint(window.get_width()+200, window.get_width()+800)])
+    y = random.choice([random.randint(window.get_height()+200, window.get_height()+800), random.randint(-window.get_height()+200, -window.get_height()+800)])
 
     rock = Rock(x, y, random.randint(1, 3))
     rockList.append(rock)
 
-''' UNDER DEVELOPMENT
-class Bomb(pygame.sprite.Sprite): #
-    def __init__(self, x, y):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = bm
-        self.rect = self.image.get_rect()
-        self.rect.center = (x,y)
-        self.timer = 20
-        self.velo = 2
-
-    def update(self):
-        if self.timer > 0:
-            self.timer -= 1
-
-        if self.velo == 2:
-            self.velo -= 0.01
-
-    def throw(self):
-        if self.timer <= 0:
-            self.timer = 20
-            self.rect.x += (player.directionx * self.velo)
-            self.velo = 2
-    
-    def show(self):
-        window.blit(self.image, (self.rect.x, self.rect.y))
-        
-class Particle():
-    def __init__(self, x, y, dx, dy, radius, color, d=None):
-        self.x = x
-        self.y = y
-        self.dx = dx
-        self.dy = dy
-        self.d = d
-        self.radius = radius
-        self.color = color
-
-    def render(self, window):
-        pChance = random.randint(1, 4)
-        if pChance == 1:
-            self.x += self.dx
-            self.y += self.dy
-        if pChance == 2:
-            self.x += self.dx
-            self.y -= self.dy
-        if pChance == 3:
-            self.x -= self.dx
-            self.y += self.dy
-        if pChance == 4:
-            self.x -= self.dx
-            self.y -= self.dy
-
-        if self.d is not None:
-            self.dx += self.d
-
-        self.radius -= 0.1
-        pygame.draw.circle(window, self.color, (self.x, self.y), self.radius)
-
-
-def particle_show():
-    for particle in particleList:
-        particle.render(window)
-
-
-def particle_start(x, y):
-    for _ in range(random.randint(5, 10)):
-        particle = Particle(x, y, random.randint(0, 15), random.randint(-30, -5),
-                            random.randint(1, 4), random.choice(particleColors), 0.2)
-        particleList.append(particle)
-
-        if len(particleList) == 20:
-            particleList.clear()
-            return
-
-'''
 
 # game loop
 
@@ -791,17 +727,14 @@ def main():
                 rock.show()
                 rock.update()
 
-                if player.lives > 0:
+                if len(rockList) < 3:
+                    for i in range(random.randint(4, 6)):
+                        x = random.choice([random.randint(-window.get_width()+200, -window.get_width()+800), random.randint(window.get_width()+200, window.get_width()+800)])
+                        y = random.choice([random.randint(window.get_height()+200, window.get_height()+800), random.randint(-window.get_height()+200, -window.get_height()+800)])
+                        rock = Rock(x, y, random.randint(1, 6))
+                        rockList.append(rock)
 
-                    if len(rockList) < 3:
-                        for i in range(random.randint(3, 5)):
-                            x = random.randint(-window.get_width()+200, window.get_width()+400)
-                            y = random.randint(window.get_height()-200, window.get_height()+100)
-
-                            rock = Rock(x, y, random.randint(1, 3))
-                            rockList.append(rock)
-
-                if rock.rect.x > window.get_width()+800 or rock.rect.x < -400 and rock.rect.y > window.get_height()+800 or rock.rect.y < -400:
+                if len(rockList) > 6:
                     rockList.remove(rock)
 
             player.update()
