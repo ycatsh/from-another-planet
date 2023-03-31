@@ -246,6 +246,10 @@ class Bullet:
         self.rect.x += self.dx
         self.rect.y += self.dy
 
+        collisionsRock = pygame.sprite.spritecollide(self, game_variables.rockList, False)
+        for _ in collisionsRock:
+            game_variables.bulletList.remove(self)
+
     def show(self):
         window.blit(self.image, (self.rect.x, self.rect.y))
 
