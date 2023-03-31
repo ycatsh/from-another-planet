@@ -7,7 +7,7 @@ import math
 clock = pygame.time.Clock()
 pygame.init()
 
-
+# window
 windowSize = 1920,1080
 window = pygame.display.set_mode((windowSize), pygame.FULLSCREEN|SCALED, vsync=1)
 
@@ -16,33 +16,49 @@ icon = pygame.image.load('assets/icon.png').convert_alpha()
 pygame.display.set_caption("From Another Planet")
 pygame.display.set_icon(icon)
 
-# fonts C&C Red Alert [INET]
-menuFont = pygame.font.Font("assets/fonts/font.ttf", 100)
-font = pygame.font.Font("assets/fonts/font.ttf", 60)
-font2 = pygame.font.Font("assets/fonts/font.ttf", 30)
+# fonts
+menuFont = pygame.font.Font("assets/fonts/C&C Red Alert [INET].ttf", 100)
+font = pygame.font.Font("assets/fonts/C&C Red Alert [INET].ttf", 60)
+font2 = pygame.font.Font("assets/fonts/C&C Red Alert [INET].ttf", 30)
+COLOR = (110, 69, 206)
 
-lvl = 1
-aliensKilled = 0
-nA = 4  # number of aliens every level; level 1: 4
-n_bA = 2  # number of blue aliens every level
-n_bgA = 1  # number of big aliens every level
-n_sA = 2 # number of shooting aliens every level
+# game variables and constants
+class GameVariables:
+    def __init__(self):
+        self.NUM_ALIENS = 4  
+        self.NUM_BLUE_ALIENS = 2 
+        self.NUM_BIG_ALIENS = 1  
+        self.NUM_SHOOTING_ALIENS = 2 
 
-a3 = []
-alienList = []
-blue_alienList = []
-big_alienList = []
-shoot_alienList = []
-alien_bulletList = []
-laserList = []
-rockList = []
-bulletList = []
-particleList = [] #DEV
-particleColors = [(251, 0, 0)] #DEV
+        self.lvl = 1
+        self.aliensKilled = 0
+
+        self.alienList = []
+        self.blue_alienList = []
+        self.big_alienList = []
+        self.shoot_alienList = []
+        self.alien_bulletList = []
+        self.laserList = []
+        self.rockList = []
+        self.bulletList = []
+
+        self.gamePause = False
+        self.gameOver = False
+        self.gameStart = False
+
+        self.moveR = False
+        self.moveL = False
+        self.moveU = False
+        self.moveD = False
+        self.shoot = False
+
+game_variables = GameVariables()
+
 
 # cursor
 cursor = pygame.image.load('assets/cursor.png').convert_alpha()
 crosshair = pygame.image.load('assets/crosshair.png').convert_alpha()
+
 
 # backgrounds
 bg = pygame.image.load('assets/bg.png').convert_alpha()
@@ -50,36 +66,27 @@ start_bg = pygame.image.load('assets/start_bg.png').convert_alpha()
 menu_bg = pygame.image.load('assets/menu_bg.png').convert_alpha()
 over_bg = pygame.image.load('assets/over_bg.png').convert_alpha()
 
-#player and enemy
+
+# player and enemy
 p = pygame.image.load('assets/p.png').convert_alpha()
 a = pygame.image.load('assets/aliens/a1.png').convert_alpha()
 a2 = pygame.image.load('assets/aliens/a2.png').convert_alpha()
+a3 = [pygame.image.load(f'assets/aliens/big/aB{i}.png').convert_alpha() for i in range(3)]
 a4 = pygame.image.load('assets/aliens/a4.png').convert_alpha()
 
-for i in range(3):
-    img = pygame.image.load(f'assets/aliens/big/aB{i}.png').convert_alpha()
-    a3.append(img)
 
-# bullet
+# bullets
 b = pygame.image.load('assets/bullet.png').convert_alpha()
 a_b = pygame.image.load('assets/aliens/a_b.png').convert_alpha()
 
-# bomb
-# bmb = pygame.image.load('assets/bomb.png').convert_alpha()
 
-# laser
+# rocks and laser
 l = pygame.image.load('assets/laser.png').convert_alpha()
-
-rockRandom = []
-for i in range(1, 7):
-    rockChoose = pygame.image.load(f'assets/rocks/r{i}.png').convert_alpha()
-    rockRandom.append(rockChoose)
-
-mColor = (110, 69, 206)
+rockRandom = [pygame.image.load(f'assets/rocks/r{i}.png').convert_alpha() for i in range(1,7)]
 
 
-def menu(text, font, mColor, x, y):
-    m = font.render(text, True, mColor)
+def menu(text, font, COLOR, x, y):
+    m = font.render(text, True, COLOR)
     window.blit(m, (x, y))
 
 def show_cursor():
@@ -93,6 +100,7 @@ def change_cursor():
     cX, cY = pygame.mouse.get_pos()
     pos = [cX, cY]
     window.blit(crosshair, pos)
+
 
 class Button:
     def __init__(self, image, x, y):
@@ -121,13 +129,8 @@ class Button:
 # buttons
 bP = pygame.image.load('assets/resume_button.png').convert_alpha()
 bQ = pygame.image.load('assets/quit_button.png').convert_alpha()
-
 playButton = Button(bP, round(window.get_width()/2), round(window.get_height()/2)+40)
 quitButton = Button(bQ, round(window.get_width()/2), round(window.get_height()/2)+140)
-play_overButton = Button(bP, round(window.get_width()/2), round(window.get_height()/2)+40)
-quit_overButton = Button(bQ, round(window.get_width()/2), round(window.get_height()/2)+140)
-play_pauseButton = Button(bP, round(window.get_width()/2), round(window.get_height()/2)+40)
-quit_pauseButton = Button(bQ, round(window.get_width()/2), round(window.get_height()/2)+140)
 
 
 class Player:
@@ -155,7 +158,7 @@ class Player:
 
         angle += 1 % 360 
 
-        collisionsRock = pygame.sprite.spritecollide(self, rockList, False)
+        collisionsRock = pygame.sprite.spritecollide(self, game_variables.rockList, False)
         for _ in collisionsRock:
             if self.lives != 0:
                 self.lives = 0
@@ -210,13 +213,9 @@ class Player:
         window.blit(pygame.transform.flip(
             self.rotated_image, False, False), self.rect)
 
-
 player = Player(round(window.get_width()/2), round(window.get_height()/2), 5)
 
-lives = []
-for x in range(7):
-    healthImage = pygame.image.load(f'assets/health/{x}.png').convert_alpha()
-    lives.append(healthImage)
+lives = [pygame.image.load(f'assets/health/{i}.png').convert_alpha() for i in range(7)]
 
 
 class HealthBar:
@@ -230,7 +229,6 @@ class HealthBar:
 
     def show(self):
         window.blit(lives[player.lives], (self.rect.x, self.rect.y))
-
 
 HEALTH = HealthBar(lives[player.lives], round(window.get_width()/2), window.get_height()-45, 0.7)
 
@@ -265,19 +263,12 @@ def bullet_move():
 
     if player.rate == 0:
         player.rate = 20
-        bulletList.append(Bullet(player.rect.centerx, player.rect.centery, speedX, speedY))
+        game_variables.bulletList.append(Bullet(player.rect.centerx, player.rect.centery, speedX, speedY))
 
 def bullet_check():
-    if not len(bulletList) == 0:
-        for bullet in bulletList:
-            if not bullet.rect.x >= 0 and bullet.rect.x <= window.get_width() and bullet.rect.y >= 60 and bullet.rect.y <= window.get_height()-60:
-                try:
-                    bulletList.remove(bullet)
-                except ValueError:
-                    pass
+    if not len(game_variables.bulletList) == 0:
+        game_variables.bulletList[:] = [bullet for bullet in game_variables.bulletList if bullet.rect.x >= 0 and bullet.rect.x <= window.get_width() and bullet.rect.y >= 60 and bullet.rect.y <= window.get_height()-60]
 
-class Knife():
-    pass
 
 class AlienBullet:
     def __init__(self, x, y, dx, dy):
@@ -286,7 +277,6 @@ class AlienBullet:
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.speed = 6
-        self.rate = 0
         self.dx = dx
         self.dy = dy
 
@@ -296,15 +286,14 @@ class AlienBullet:
 
         collisionsPlayer = pygame.Rect.colliderect(self.rect, player.rect)
         if collisionsPlayer:
-            alien_bulletList.remove(self)
+            game_variables.alien_bulletList.remove(self)
             player.lives -= 1
 
     def show(self):
         window.blit(self.image, (self.rect.x, self.rect.y))
 
 def alien_shoot():
-    global alien_bullet 
-    freq = random.randint(75, 175)
+    freq = random.randint(50, 175)
 
     pX, pY = player.rect.x, player.rect.y
 
@@ -318,16 +307,12 @@ def alien_shoot():
 
     if alienShoot.rate == 0:
         alienShoot.rate = freq
-        alien_bulletList.append(AlienBullet(alienShoot.rect.centerx, alienShoot.rect.centery, speedX, speedY))
+        game_variables.alien_bulletList.append(AlienBullet(alienShoot.rect.centerx, alienShoot.rect.centery, speedX, speedY))
 
 def alien_bullet_check():
-    if not len(alien_bulletList) == 0:
-        for alien_bullet in alien_bulletList:
-            if not  alien_bullet.rect.x >= 0 and alien_bullet.rect.x <= window.get_width() and alien_bullet.rect.y >= 60 and alien_bullet.rect.y <= window.get_height()-60:
-                try:
-                    alien_bulletList.remove(alien_bullet)
-                except ValueError:
-                    pass
+    if not len(game_variables.alien_bulletList) == 0:
+        game_variables.alien_bulletList[:] = [alien_bullet for alien_bullet in game_variables.alien_bulletList if alien_bullet.rect.x >= -20 and alien_bullet.rect.x <= window.get_width()+20 and alien_bullet.rect.y >= 60 and alien_bullet.rect.y <= window.get_height()-60]
+                
 
 class Alien:
     def __init__(self, x, y):
@@ -341,34 +326,29 @@ class Alien:
         self.rect.x -= self.speed
 
     def update(self):
-        global aliensKilled
-
-        collisionsRock = pygame.sprite.spritecollide(self, rockList, False)
+        collisionsRock = pygame.sprite.spritecollide(self, game_variables.rockList, False)
         for _ in collisionsRock:
-            alienList.remove(self)
+            game_variables.alienList.remove(self)
 
-
-        collisionsBullet = pygame.sprite.spritecollide(self, bulletList, False)
+        collisionsBullet = pygame.sprite.spritecollide(self, game_variables.bulletList, False)
         for bullet in collisionsBullet:
-            # particle_show()
-            #particle_start(self.rect.centerx, self.rect.centery)
             if player.lives > 0:
-                bulletList.remove(bullet)
-                alienList.remove(self)
-                aliensKilled += 1
+                game_variables.bulletList.remove(bullet)
+                game_variables.alienList.remove(self)
+                game_variables.aliensKilled += 1
 
         collisionsPlayer = pygame.Rect.colliderect(self.rect, player.rect)
         if collisionsPlayer:
-            alienList.remove(alien)
+            game_variables.alienList.remove(alien)
             player.lives -= 1
 
     def show(self):
         window.blit(self.image, (self.rect.x, self.rect.y))
 
 
-for _ in range(nA):
+for _ in range(game_variables.NUM_ALIENS):
     alien = Alien((random.randint(window.get_width()+200, window.get_width()+400)), (random.randint(100, window.get_height()-120)))
-    alienList.append(alien)
+    game_variables.alienList.append(alien)
 
 
 class BlueAlien:
@@ -385,25 +365,21 @@ class BlueAlien:
             self.rect.x -= self.speed
 
     def update(self):
-        global aliensKilled
-
-        collisionsRock = pygame.sprite.spritecollide(self, rockList, False)
+        collisionsRock = pygame.sprite.spritecollide(self, game_variables.rockList, False)
         for _ in collisionsRock:
-            blue_alienList.remove(self)
+            game_variables.blue_alienList.remove(self)
 
 
-        collisionsBullet = pygame.sprite.spritecollide(self, bulletList, False)
+        collisionsBullet = pygame.sprite.spritecollide(self, game_variables.bulletList, False)
         for bullet in collisionsBullet:
-            # particle_show()
-            #particle_start(self.rect.centerx, self.rect.centery)
             if player.lives > 0:
-                bulletList.remove(bullet)
-                blue_alienList.remove(self)
-                aliensKilled += 1
+                game_variables.bulletList.remove(bullet)
+                game_variables.blue_alienList.remove(self)
+                game_variables.aliensKilled += 1
 
         collisionsPlayer = pygame.Rect.colliderect(self.rect, player.rect)
         if collisionsPlayer:
-            blue_alienList.remove(self)
+            game_variables.blue_alienList.remove(self)
             player.lives -= 1
 
     def show(self):
@@ -411,9 +387,9 @@ class BlueAlien:
             window.blit(self.image, (self.rect.x, self.rect.y))
 
 
-for _ in range(n_bA):
+for _ in range(game_variables.NUM_BLUE_ALIENS):
     alienBlue = BlueAlien((random.randint(window.get_width()+200, window.get_width()+400)), (random.randint(100, window.get_height()-120)))
-    blue_alienList.append(alienBlue)
+    game_variables.blue_alienList.append(alienBlue)
 
 
 class BigAlien:
@@ -427,44 +403,40 @@ class BigAlien:
         self.chance = random.randint(1, 4)
 
     def move(self):
-        if lvl > 4:
+        if game_variables.lvl > 4:
             if self.chance == 3:
                 self.rect.x -= self.speed
 
     def update(self):
-        global aliensKilled
-
-        collisionsRock = pygame.sprite.spritecollide(self, rockList, False)
+        collisionsRock = pygame.sprite.spritecollide(self, game_variables.rockList, False)
         for _ in collisionsRock:
-            big_alienList.remove(self)
+            game_variables.big_alienList.remove(self)
 
-        collisionsBullet = pygame.sprite.spritecollide(self, bulletList, False)
+        collisionsBullet = pygame.sprite.spritecollide(self, game_variables.bulletList, False)
         for bullet in collisionsBullet:
-            # particle_show()
-            #particle_start(self.rect.centerx, self.rect.centery)
             if player.lives > 0:
                 self.lives -= 1
-                bulletList.remove(bullet)
+                game_variables.bulletList.remove(bullet)
                 if self.lives < 0:
-                    big_alienList.remove(self)
-                    aliensKilled += 1
+                    game_variables.big_alienList.remove(self)
+                    game_variables.aliensKilled += 1
 
         collisionsPlayer = pygame.Rect.colliderect(self.rect, player.rect)
         if collisionsPlayer:
             self.lives -= 1
             if self.lives < 0:
-                big_alienList.remove(self)
+                game_variables.big_alienList.remove(self)
                 player.lives -= 1
 
     def show(self):
-        if lvl > 4:
+        if game_variables.lvl > 4:
             if self.chance == 3:
                 window.blit(a3[self.lives], (self.rect.x, self.rect.y))
 
 
-for _ in range(n_bgA):
+for _ in range(game_variables.NUM_BIG_ALIENS):
     alienBig = BigAlien((random.randint(window.get_width()+200, window.get_width()+400)), (random.randint(100, window.get_height()-120)))
-    big_alienList.append(alienBig)
+    game_variables.big_alienList.append(alienBig)
 
 
 class ShootAlien:
@@ -478,7 +450,7 @@ class ShootAlien:
         self.rate = 0
 
     def move(self):
-        if lvl > 2:
+        if game_variables.lvl > 2:
             if self.chance == 2:
                 self.rect.x -= self.speed
                 if self.rect.x < window.get_width():
@@ -486,38 +458,33 @@ class ShootAlien:
                     alien_bullet_check()
 
     def update(self):
-
-        global aliensKilled
-
         if self.rate > 0:
             self.rate -= 1
 
-        collisionsRock = pygame.sprite.spritecollide(self, rockList, False)
+        collisionsRock = pygame.sprite.spritecollide(self, game_variables.rockList, False)
         for _ in collisionsRock:
-            shoot_alienList.remove(self)
+            game_variables.shoot_alienList.remove(self)
 
-        collisionsBullet = pygame.sprite.spritecollide(self, bulletList, False)
+        collisionsBullet = pygame.sprite.spritecollide(self, game_variables.bulletList, False)
         for bullet in collisionsBullet:
-            # particle_show()
-            #particle_start(self.rect.centerx, self.rect.centery)
             if player.lives > 0:
-                bulletList.remove(bullet)
-                shoot_alienList.remove(self)
-                aliensKilled += 1
+                game_variables.bulletList.remove(bullet)
+                game_variables.shoot_alienList.remove(self)
+                game_variables.aliensKilled += 1
 
         collisionsPlayer = pygame.Rect.colliderect(self.rect, player.rect)
         if collisionsPlayer:
-            shoot_alienList.remove(self)
+            game_variables.shoot_alienList.remove(self)
             player.lives -= 1
 
     def show(self):
-        if lvl > 2:
+        if game_variables.lvl > 2:
             if self.chance == 2:
                 window.blit(self.image, (self.rect.x, self.rect.y))
 
-for _ in range(n_sA):
+for _ in range(game_variables.NUM_SHOOTING_ALIENS):
     alienShoot = ShootAlien((random.randint(window.get_width()+200, window.get_width()+400)), (random.randint(100, window.get_height()-120)))
-    shoot_alienList.append(alienShoot)
+    game_variables.shoot_alienList.append(alienShoot)
 
 
 class Laser:
@@ -532,8 +499,8 @@ class Laser:
 
     def update(self):
         slowdown = random.randint(1, 2)
-        self.speedx += lvl/8
-        self.speedy += lvl/12
+        self.speedx += game_variables.lvl/8
+        self.speedy += game_variables.lvl/12
 
         if self.speedx > 6 or self.speedy > 6:
             if slowdown == 1:
@@ -596,7 +563,7 @@ class Rock:
 
         collisionsLaser= pygame.Rect.colliderect(self.rect, laser.rect)
         if collisionsLaser:
-            rockList.remove(self)
+            game_variables.rockList.remove(self)
 
     def show(self):
         window.blit(self.tmp_image, (self.rect.x, self.rect.y))
@@ -607,74 +574,62 @@ for i in range(4):
     y = random.choice([random.randint(window.get_height()+200, window.get_height()+800), random.randint(-window.get_height()+200, -window.get_height()+800)])
 
     rock = Rock(x, y, random.randint(1, 3))
-    rockList.append(rock)
+    game_variables.rockList.append(rock)
 
 
 # game loop
-
-def main():
-
-    global lvl, nA, n_bA, n_bgA, n_sA, bulletList, alienList, blue_alienList, big_alienList, alien_bulletList,aliensKilled, alien, alienBlue, alienBig, alienShoot, laser, player, laserNUM, rock
-
-    # game variables
-    gamePause = False
-    gameOver = False
-    gameStart = False
+def main(game_variables):
 
     tiles = math.ceil(window.get_width() / bg.get_width()) + 1
     scroll = 0
 
-    moveR = False
-    moveL = False
-    moveU = False
-    moveD = False
-    shoot = False
+    global alienShoot
 
     while True:
 
-        if gameStart == False:
+        if game_variables.gameStart == False:
             window.blit(start_bg, (0, 0))
             if playButton.draw():
-                gameStart = True
+                game_variables.gameStart = True
 
             if quitButton.draw():
                 pygame.quit()
                 sys.exit()
 
-        if gameOver == True:
-            gameStart = False
+        if game_variables.gameOver == True:
+            game_variables.gameStart = False
             window.blit(over_bg, (0, 0))
-            menu("YOU DIED...", font, mColor, round(window.get_width()/2)-110, (window.get_height()/2)-150)
-            menu("GAME OVER", font, mColor, round(window.get_width()/2)-110, (window.get_height()/2)-70)
+            menu("YOU DIED...", font, COLOR, round(window.get_width()/2)-110, (window.get_height()/2)-150)
+            menu("GAME OVER", font, COLOR, round(window.get_width()/2)-110, (window.get_height()/2)-70)
 
             # if play_overButton.draw():
             #gameStart = True
 
-            if quit_overButton.draw():
+            if quitButton.draw():
                 pygame.quit()
                 sys.exit()
 
-        if gamePause == True:
-            if gameOver == True:
+        if game_variables.gamePause == True:
+            if game_variables.gameOver == True:
                 pass
             else:
                 window.blit(menu_bg, (0, 0))
-                menu("PAUSE MENU", font, mColor, round(window.get_width()/2)-130, (window.get_height()/2)-200)
+                menu("PAUSE MENU", font, COLOR, round(window.get_width()/2)-130, (window.get_height()/2)-200)
 
-                if play_pauseButton.draw():
-                    gamePause = False
+                if playButton.draw():
+                    game_variables.gamePause = False
 
-                if quit_pauseButton.draw():
+                if quitButton.draw():
                     pygame.quit()
                     sys.exit()
 
-        if gameStart == True and gamePause == False:
+        if game_variables.gameStart == True and game_variables.gamePause == False:
 
             change_cursor()
 
             if player.lives <= 0:
-                gameOver = True
-                gameStart = False
+                game_variables.gameOver = True
+                game_variables.gameStart = False
 
             for i in range(0, tiles):
                 window.blit(bg, (i*bg.get_width() + scroll, 0))
@@ -683,38 +638,38 @@ def main():
             if abs(scroll) > bg.get_width():
                 scroll = 0
 
-            if len(alienList) == 0:
-                lvl += 1
-                nA += 1
-                n_bA += 1
+            if len(game_variables.alienList) == 0:
+                game_variables.lvl += 1
+                game_variables.NUM_ALIENS += 1
+                game_variables.NUM_BLUE_ALIENS += 1
 
-                if lvl > 2:
-                    n_sA += 2
-                    if n_sA > 6:
-                        n_sA = 3
+                if game_variables.lvl > 2:
+                    game_variables.NUM_SHOOTING_ALIENS += 2
+                    if game_variables.NUM_SHOOTING_ALIENS > 6:
+                        game_variables.NUM_SHOOTING_ALIENS = 3
 
-                if lvl > 4:
-                    n_bgA += 1
-                    if n_bgA > 5:
-                        n_bgA = 0
+                if game_variables.lvl > 4:
+                    game_variables.NUM_BIG_ALIENS += 1
+                    if game_variables.NUM_BIG_ALIENS > 5:
+                        game_variables.NUM_BIG_ALIENS = 0
 
-                for _ in range(nA):
+                for _ in range(game_variables.NUM_ALIENS):
                     alien = Alien((random.randint(window.get_width()+200, window.get_width()+400)), (random.randint(100, window.get_height()-120)))
-                    alienList.append(alien)
+                    game_variables.alienList.append(alien)
 
-                for _ in range(n_bA):
+                for _ in range(game_variables.NUM_BLUE_ALIENS):
                     alienBlue = BlueAlien((random.randint(window.get_width()+200, window.get_width()+400)), (random.randint(100, window.get_height()-120)))
-                    blue_alienList.append(alienBlue)
+                    game_variables.blue_alienList.append(alienBlue)
 
-                if lvl > 4:
-                    for _ in range(n_bgA):
+                if game_variables.lvl > 4:
+                    for _ in range(game_variables.NUM_BIG_ALIENS):
                         alienBig = BigAlien((random.randint(window.get_width()+200, window.get_width()+400)), (random.randint(100, window.get_height()-120)))
-                        big_alienList.append(alienBig)
+                        game_variables.big_alienList.append(alienBig)
 
-                if lvl > 2:
-                    for _ in range(n_sA):
+                if game_variables.lvl > 2:
+                    for _ in range(game_variables.NUM_SHOOTING_ALIENS):
                         alienShoot = ShootAlien((random.randint(window.get_width()+200, window.get_width()+400)), (random.randint(100, window.get_height()-120)))
-                        shoot_alienList.append(alienShoot)
+                        game_variables.shoot_alienList.append(alienShoot)
 
                 laser.update()
 
@@ -723,43 +678,43 @@ def main():
             if laser.rect.x >= window.get_width()+200:
                 laser.moveRL()
 
-            for rock in rockList:
+            for rock in game_variables.rockList:
                 rock.show()
                 rock.update()
 
-                if len(rockList) < 3:
+                if len(game_variables.rockList) < 3:
                     for i in range(random.randint(4, 6)):
                         x = random.choice([random.randint(-window.get_width()+200, -window.get_width()+800), random.randint(window.get_width()+200, window.get_width()+800)])
                         y = random.choice([random.randint(window.get_height()+200, window.get_height()+800), random.randint(-window.get_height()+200, -window.get_height()+800)])
                         rock = Rock(x, y, random.randint(1, 6))
-                        rockList.append(rock)
+                        game_variables.rockList.append(rock)
 
-                if len(rockList) > 6:
-                    rockList.remove(rock)
+                if len(game_variables.rockList) > 6:
+                    game_variables.rockList.remove(rock)
 
             player.update()
             player.show()
-            player.move(moveR, moveL, moveU, moveD)
+            player.move(game_variables.moveR, game_variables.moveL, game_variables.moveU, game_variables.moveD)
 
             if player.lives <= 6 and player.lives > 0:
-                if shoot:
+                if game_variables.shoot:
                     bullet_move()
                     bullet_check()
 
-            for bullet in bulletList:
+            for bullet in game_variables.bulletList:
                 bullet.update()
                 bullet.show()
 
-            for alien in alienList:
+            for alien in game_variables.alienList:
                 alien.show()
                 alien.update()
                 alien.move()
                 if player.lives > 0:
                     if alien.rect.x + alien.image.get_width() < 10:
                         player.lives -= 1
-                        alienList.remove(alien)
+                        game_variables.alienList.remove(alien)
             
-            for alienBlue in blue_alienList:
+            for alienBlue in game_variables.blue_alienList:
                 alienBlue.show()
                 alienBlue.update()
                 alienBlue.move()
@@ -767,9 +722,9 @@ def main():
                 if player.lives > 0:
                     if alienBlue.rect.x + alienBlue.image.get_width() < 10:
                         player.lives -= 1
-                        blue_alienList.remove(alienBlue)
+                        game_variables.blue_alienList.remove(alienBlue)
 
-            for alienBig in big_alienList:
+            for alienBig in game_variables.big_alienList:
                 alienBig.show()
                 alienBig.update()
                 alienBig.move()
@@ -777,14 +732,14 @@ def main():
                 if player.lives > 0:
                     if alienBig.rect.x + alienBig.image.get_width() < 10:
                         player.lives -= 1
-                        big_alienList.remove(alienBig)
+                        game_variables.big_alienList.remove(alienBig)
 
 
-            for alien_bullet in alien_bulletList:
+            for alien_bullet in game_variables.alien_bulletList:
                 alien_bullet.update()
                 alien_bullet.show()
-
-            for alienShoot in shoot_alienList:
+                
+            for alienShoot in game_variables.shoot_alienList:
                 alienShoot.show()
                 alienShoot.update()
                 alienShoot.move()
@@ -792,13 +747,14 @@ def main():
                 if player.lives > 0:
                     if alienShoot.rect.x + alienShoot.image.get_width() < 64:
                         player.lives -= 1
-                        shoot_alienList.remove(alienShoot)
+                        game_variables.shoot_alienList.remove(alienShoot)
            
             clock.tick()
-            menu(f"FPS: {int(clock.get_fps())}", font2, mColor, 75, 20)
             HEALTH.show()
-            menu(f"ALIENS KILLED: {aliensKilled}", font2, mColor, window.get_width()-220, window.get_height()-50)
-            menu(f"LEVEL: {lvl}", font2, mColor, 50, window.get_height()-50)
+
+            menu(f"FPS: {int(clock.get_fps())}", font2, COLOR, 75, 20)
+            menu(f"ALIENS KILLED: {game_variables.aliensKilled}", font2, COLOR, window.get_width()-220, window.get_height()-50)
+            menu(f"LEVEL: {game_variables.lvl}", font2, COLOR, 50, window.get_height()-50)
 
         else:
             show_cursor()
@@ -810,37 +766,38 @@ def main():
 
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
-                    gamePause = True
+                    game_variables.gamePause = True
                 if event.key == K_RIGHT or event.key == K_d:
-                    moveR = True
+                    game_variables.moveR = True
                 if event.key == K_LEFT or event.key == K_a:
-                    moveL = True
+                    game_variables.moveL = True
                 if event.key == K_UP or event.key == K_w:
-                    moveU = True
+                    game_variables.moveU = True
                 if event.key == K_DOWN or event.key == K_s:
-                    moveD = True
+                    game_variables.moveD = True
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                shoot = True
+                game_variables.shoot = True
 
             if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-                shoot = False
+                game_variables.shoot = False
 
             if event.type == KEYUP:
                 if event.key == K_RIGHT or event.key == K_d:
-                    moveR = False
+                    game_variables.moveR = False
                 if event.key == K_LEFT or event.key == K_a:
-                    moveL = False
+                    game_variables.moveL = False
                 if event.key == K_UP or event.key == K_w:
-                    moveU = False
+                    game_variables.moveU = False
                 if event.key == K_DOWN or event.key == K_s:
-                    moveD = False
+                    game_variables.moveD = False
 
-        if not gamePause and not gameOver and gameStart:
+        if not game_variables.gamePause and not game_variables.gameOver and game_variables.gameStart:
             change_cursor()
 
         pygame.display.update()
         clock.tick(60)
 
 
-main()
+if __name__ == '__main__':
+    main(game_variables)
