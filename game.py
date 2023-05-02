@@ -1,26 +1,13 @@
 import pygame
 import sys
-from pygame.locals import *
 import random
 import math
+from pygame.locals import *
+from assets import *
+from funcs import *
 
 clock = pygame.time.Clock()
-pygame.init()
 
-# window
-windowSize = 1920,1080
-window = pygame.display.set_mode((windowSize), pygame.FULLSCREEN|SCALED, vsync=1)
-
-# icons
-icon = pygame.image.load('assets/icon.png').convert_alpha()
-pygame.display.set_caption("From Another Planet")
-pygame.display.set_icon(icon)
-
-# fonts
-menuFont = pygame.font.Font("assets/fonts/C&C Red Alert [INET].ttf", 100)
-font = pygame.font.Font("assets/fonts/C&C Red Alert [INET].ttf", 60)
-font2 = pygame.font.Font("assets/fonts/C&C Red Alert [INET].ttf", 30)
-COLOR = (110, 69, 206)
 
 # game variables and constants
 class GameVariables:
@@ -55,53 +42,6 @@ class GameVariables:
 game_variables = GameVariables()
 
 
-# cursor
-cursor = pygame.image.load('assets/cursor.png').convert_alpha()
-crosshair = pygame.image.load('assets/crosshair.png').convert_alpha()
-
-
-# backgrounds
-bg = pygame.image.load('assets/bg.png').convert_alpha()
-start_bg = pygame.image.load('assets/start_bg.png').convert_alpha()
-menu_bg = pygame.image.load('assets/menu_bg.png').convert_alpha()
-over_bg = pygame.image.load('assets/over_bg.png').convert_alpha()
-
-
-# player and enemy
-p = pygame.image.load('assets/p.png').convert_alpha()
-a = pygame.image.load('assets/aliens/a1.png').convert_alpha()
-a2 = pygame.image.load('assets/aliens/a2.png').convert_alpha()
-a3 = [pygame.image.load(f'assets/aliens/big/aB{i}.png').convert_alpha() for i in range(3)]
-a4 = pygame.image.load('assets/aliens/a4.png').convert_alpha()
-
-
-# bullets
-b = pygame.image.load('assets/bullet.png').convert_alpha()
-a_b = pygame.image.load('assets/aliens/a_b.png').convert_alpha()
-
-
-# rocks and laser
-l = pygame.image.load('assets/laser.png').convert_alpha()
-rockRandom = [pygame.image.load(f'assets/rocks/r{i}.png').convert_alpha() for i in range(1,7)]
-
-
-def menu(text, font, COLOR, x, y):
-    m = font.render(text, True, COLOR)
-    window.blit(m, (x, y))
-
-def show_cursor():
-    pygame.mouse.set_cursor((8, 8), (0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0))
-    cX, cY = pygame.mouse.get_pos()
-    pos = [cX, cY]
-    window.blit(cursor, pos)
-
-def change_cursor():
-    pygame.mouse.set_cursor((8, 8), (0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0))
-    cX, cY = pygame.mouse.get_pos()
-    pos = [cX, cY]
-    window.blit(crosshair, pos)
-
-
 class Button:
     def __init__(self, image, x, y):
         self.image = image
@@ -125,10 +65,7 @@ class Button:
 
         return action
 
-
 # buttons
-bP = pygame.image.load('assets/resume_button.png').convert_alpha()
-bQ = pygame.image.load('assets/quit_button.png').convert_alpha()
 playButton = Button(bP, round(window.get_width()/2), round(window.get_height()/2)+40)
 quitButton = Button(bQ, round(window.get_width()/2), round(window.get_height()/2)+140)
 
@@ -215,8 +152,6 @@ class Player:
 
 player = Player(round(window.get_width()/2), round(window.get_height()/2), 5)
 
-lives = [pygame.image.load(f'assets/health/{i}.png').convert_alpha() for i in range(7)]
-
 
 class HealthBar:
     def __init__(self, image, x, y, scale):
@@ -245,10 +180,6 @@ class Bullet:
     def update(self):
         self.rect.x += self.dx
         self.rect.y += self.dy
-
-        collisionsRock = pygame.sprite.spritecollide(self, game_variables.rockList, False)
-        for _ in collisionsRock:
-            game_variables.bulletList.remove(self)
 
     def show(self):
         window.blit(self.image, (self.rect.x, self.rect.y))
@@ -542,8 +473,17 @@ class Rock:
         self.rect.center = (x, y)
         self.speed = speed
         self.angle = 10
+        self.lives = 5
         self.directionx = random.choice([1, -1])
         self.directiony = random.choice([1, -1])
+
+    def explode(self, radius, frames):
+        if self.lives <= 0:
+            explosionX = self.rect.x + rock.image.get_width() // 2 - radius
+            explosionY = self.rect.y + rock.image.get_height() // 2 - radius
+            for frame in frames:
+                window.blit(frame, (explosionX, explosionY))
+            game_variables.rockList.remove(self)
 
     def update(self):
 
@@ -568,6 +508,11 @@ class Rock:
         collisionsLaser= pygame.Rect.colliderect(self.rect, laser.rect)
         if collisionsLaser:
             game_variables.rockList.remove(self)
+
+        collisionsBullet = pygame.sprite.spritecollide(self, game_variables.bulletList, False)
+        for bullet in collisionsBullet:
+            game_variables.bulletList.remove(bullet)
+            self.lives -= 1            
 
     def show(self):
         window.blit(self.tmp_image, (self.rect.x, self.rect.y))
@@ -685,6 +630,7 @@ def main(game_variables):
             for rock in game_variables.rockList:
                 rock.show()
                 rock.update()
+                rock.explode(100, explosion_frames)
 
                 if len(game_variables.rockList) < 3:
                     for i in range(random.randint(4, 6)):
