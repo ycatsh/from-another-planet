@@ -32,7 +32,7 @@ def init_game():
     add_alien(ShootAlien, game_variables.NUM_SHOOTING_ALIENS, game_variables.shoot_alienList)
 
     laser = Laser(1, round(window.get_height()/2))
-    add_rocks(Rock, game_variables.rockList)
+    add_rocks(4, Rock, game_variables.rockList, 1, 3)
 
     EXPLOSION_FRAME_EVENT = pygame.USEREVENT + 1
     pygame.time.set_timer(EXPLOSION_FRAME_EVENT, 50)
@@ -439,6 +439,16 @@ class Rock:
         self.rect.x += self.speed * self.directionx
         self.rect.y += self.speed * self.directiony
 
+        other_rocks = []
+        for rock in game_variables.rockList:
+            if rock != self:
+                other_rocks.append(rock)
+
+        collisionsRock = pygame.sprite.spritecollide(self, other_rocks, False)
+        for rock in collisionsRock:
+            self.lives -= 1
+            rock.lives -= 1
+
         collisionsLaser= pygame.Rect.colliderect(self.rect, laser.rect)
         if collisionsLaser:
             game_variables.rockList.remove(self)
@@ -539,20 +549,14 @@ def main():
                 laser.moveRL()
 
             for rock in game_variables.rockList:
-                rock.show()
-                rock.update()
-                if rock.lives <= 0:
+                if rock.lives > 0:
+                    rock.show()
+                    rock.update()
+                else:
                     rock.explode(100, explosion_frames)
 
                 if len(game_variables.rockList) < 3:
-                    for i in range(random.randint(4, 6)):
-                        x = random.choice([random.randint(-window.get_width()+200, -window.get_width()+800), random.randint(window.get_width()+200, window.get_width()+800)])
-                        y = random.choice([random.randint(window.get_height()+200, window.get_height()+800), random.randint(-window.get_height()+200, -window.get_height()+800)])
-                        rock = Rock(x, y, random.randint(1, 6))
-                        game_variables.rockList.append(rock)
-
-                if len(game_variables.rockList) > 6:
-                    game_variables.rockList.remove(rock)
+                    add_rocks(random.randint(6, 8), Rock, game_variables.rockList, 2, 6)
 
             player.update()
             player.show()
