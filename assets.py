@@ -13,10 +13,9 @@ pygame.display.set_caption("From Another Planet")
 pygame.display.set_icon(icon)
 
 # fonts
-menuFont = pygame.font.Font("assets/fonts/C&C Red Alert [INET].ttf", 100)
 font = pygame.font.Font("assets/fonts/C&C Red Alert [INET].ttf", 60)
-font2 = pygame.font.Font("assets/fonts/C&C Red Alert [INET].ttf", 30)
-COLOR = (110, 69, 206)
+sm_font = pygame.font.Font("assets/fonts/C&C Red Alert [INET].ttf", 30)
+color = (110, 69, 206)
 
 
 # cursor
@@ -60,7 +59,7 @@ lives = [pygame.image.load(f'assets/health/{i}.png').convert_alpha() for i in ra
 
 #explosion
 explosion_frames = []
-for i in range(500):
+for i in range(100):
     surface = pygame.Surface((200, 200), pygame.SRCALPHA)
-    pygame.draw.circle(surface, (255, 255, 255), (100, 100), 100 - i)
+    pygame.draw.circle(surface, (255, 255, 255), (100, 100), 100-(i/1.5))
     explosion_frames.append(surface)
