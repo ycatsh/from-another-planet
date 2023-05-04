@@ -35,11 +35,12 @@ def add_alien(alien_type, num, alien_list):
         alien = alien_type(min_pos, max_pos)
         alien_list.append(alien)
 
-def add_rocks(rock_class, rock_list):
-    for _ in range(4):
+
+def add_rocks(num, rock_class, rock_list, min_speed, max_speed):
+    for _ in range(num):
         x = random.choice([random.randint(-window.get_width()+200, -window.get_width()+800), random.randint(window.get_width()+200, window.get_width()+800)])
         y = random.choice([random.randint(window.get_height()+200, window.get_height()+800), random.randint(-window.get_height()+200, -window.get_height()+800)])
-        rock = rock_class(x, y, random.randint(1, 3))
+        rock = rock_class(x, y, random.randint(min_speed, max_speed))
         rock_list.append(rock)
 
 
