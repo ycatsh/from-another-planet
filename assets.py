@@ -1,7 +1,9 @@
 import pygame
 from pygame.locals import *
 
+pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.init()
+pygame.mixer.set_num_channels(64)
 
 # window
 windowSize = 1920,1080
@@ -17,10 +19,15 @@ font = pygame.font.Font("assets/fonts/C&C Red Alert [INET].ttf", 60)
 sm_font = pygame.font.Font("assets/fonts/C&C Red Alert [INET].ttf", 30)
 color = (110, 69, 206)
 
+#music 
+#pygame.mixer.music.load('assets/sounds/music.wav')
+#shoot_sound = pygame.mixer.Sound('assets/sounds/shoot.wav')
+
 
 # cursor
 cursor = pygame.image.load('assets/cursor.png').convert_alpha()
 crosshair = pygame.image.load('assets/crosshair.png').convert_alpha()
+tp_cursor = pygame.image.load('assets/tp_cursor.png').convert_alpha()
 
 
 # backgrounds
