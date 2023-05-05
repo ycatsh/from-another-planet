@@ -13,6 +13,9 @@ def text(content, x, y, font=font, sm_font=sm_font, color=color, small=False):
         text = font.render(content, True, color)
         window.blit(text, (x, y))
 
+def hide_cursor():
+    pygame.mouse.set_cursor((8, 8), (0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0))
+
 
 def show_cursor():
     pygame.mouse.set_cursor((8, 8), (0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0))
@@ -26,6 +29,29 @@ def change_cursor():
     cX, cY = pygame.mouse.get_pos()
     pos = [cX, cY]
     window.blit(crosshair, pos)
+
+
+def teleport_cursor():
+    pygame.mouse.set_cursor((8, 8), (0, 0), (0, 0, 0, 0, 0, 0, 0, 0), (0, 0, 0, 0, 0, 0, 0, 0))
+    cX, cY = pygame.mouse.get_pos()
+    pos = [cX, cY]
+    window.blit(tp_cursor, pos)
+
+
+def change_level(game_variables):
+    game_variables.lvl += 1
+    game_variables.NUM_ALIENS += 1
+    game_variables.NUM_BLUE_ALIENS += 1
+
+    if game_variables.lvl > 2:
+        game_variables.NUM_SHOOTING_ALIENS += 2
+        if game_variables.NUM_SHOOTING_ALIENS > 6:
+            game_variables.NUM_SHOOTING_ALIENS = 3
+
+    if game_variables.lvl > 4:
+        game_variables.NUM_BIG_ALIENS += 1
+        if game_variables.NUM_BIG_ALIENS > 5:
+            game_variables.NUM_BIG_ALIENS = 0
 
 
 def add_alien(alien_type, num, alien_list):
@@ -69,9 +95,12 @@ def shoot(bullet_class, player, alien, bullet_list, enemy=False):
         distanceX = sX - player.rect.x
         distanceY = sY - player.rect.y
         angle = math.atan2(distanceY, distanceX)
+
         speedX = int(16 * math.cos(angle))
         speedY = int(16 * math.sin(angle))
 
         if player.rate == 0:
-            player.rate = 20
-            bullet_list.append(bullet_class(player.rect.centerx, player.rect.centery, speedX, speedY))
+            player.rate = 15
+            bullet = bullet_class(player.rect.centerx, player.rect.centery, speedX, speedY)
+            bullet.rotate(angle)
+            bullet_list.append(bullet)

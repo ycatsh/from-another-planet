@@ -9,6 +9,7 @@ from pygame.locals import *
 from funcs import *
 from assets import *
 from buttons import *
+from menus import *
 
 clock = pygame.time.Clock()
 
@@ -71,17 +72,37 @@ class GameVariables:
         self.moveU = False
         self.moveD = False
         self.shoot = False
+        self.pwr = False
 
 
 class Player:
-    def __init__(self, x, y, location):
-        self.reset(x, y, location)
+    def __init__(self, x, y, speed):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = p
+        self.lives = 6
+        self.charge = "NOT ACTIVATED"
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        self.speed = speed
+        self.rate = 0
 
-    def update(self):
+    def update(self, pwr):
         if self.rate > 0:
             self.rate -= 1
 
         mXY = pygame.mouse.get_pos()
+
+        if game_variables.aliensKilled > 0:
+            if any(game_variables.aliensKilled % div == 0 for div in [10, 11, 12, 15]):
+                self.charge = "ACTIVATED"
+                hide_cursor()
+                teleport_cursor()
+                if pwr:
+                    self.rect.x = mXY[0]
+                    self.rect.y = mXY[1]
+            else:
+                self.charge = "NOT ACTIVATED"
+    
         angle = math.atan2(mXY[1]-self.rect.centery, mXY[0]-self.rect.centerx)*180/math.pi
         self.rotated_image = pygame.transform.rotate(self.image, -angle)
         self.rect = self.image.get_rect(center=self.rect.center)
@@ -99,25 +120,19 @@ class Player:
         y = 0
 
         if moveR:
-            x = self.location
-            self.directionx = 1
-            self.flip = False
+            x = self.speed
             y = 0
 
         if moveL:
-            x = -self.location
-            self.directionx = -1
-            self.flip = True
+            x = -self.speed
             y = 0
 
         if moveU:
-            y = -self.location
-            self.directiony = 1
+            y = -self.speed
             x = 0
 
         if moveD:
-            y = self.location
-            self.directiony = -1
+            y = self.speed
             x = 0
 
         if self.rect.bottom + y > window.get_height()-81:
@@ -134,30 +149,17 @@ class Player:
 
         self.rect.x += x
         self.rect.y += y
+        self.movement = True
 
     def show(self):
-        window.blit(pygame.transform.flip(
-            self.rotated_image, False, False), self.rect)
-        
-    def reset(self, x, y, location):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = p
-        self.lives = 6
-        self.flip = False
-        self.directionx = 0
-        self.directiony = 0
-        self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
-        self.location = location
-        self.rate = 0
+        window.blit(self.rotated_image, self.rect)
 
 
 class HealthBar:
     def __init__(self, image, x, y, scale):
         width = image.get_width()
         height = image.get_height()
-        self.image = pygame.transform.scale(
-            image, (int(width*scale), int(height*scale)))
+        self.image = pygame.transform.scale(image, (int(width*scale), int(height*scale)))
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
 
@@ -174,12 +176,16 @@ class Bullet:
         self.dx = dx
         self.dy = dy
 
-    def update(self):
+    def update(self):        
         self.rect.x += self.dx
         self.rect.y += self.dy
 
+    def rotate(self, angle):
+        self.rotated_image = pygame.transform.rotate(self.image, -math.degrees(angle))
+        self.rect = self.image.get_rect(center=self.rect.center)
+
     def show(self):
-        window.blit(self.image, (self.rect.x, self.rect.y))
+        window.blit(self.rotated_image, (self.rect.x, self.rect.y))
 
 
 class AlienBullet:
@@ -467,42 +473,11 @@ def main():
     init_game()
 
     while True:
-        if not game_variables.gameStart:
-            window.blit(start_bg, (0, 0))
-            if playButton.draw():
-                game_variables.gameStart = True
-
-            if quitButton.draw():
-                pygame.quit()
-                sys.exit()
-
-        if game_variables.gameOver:
-            window.blit(over_bg, (0, 0))
-            text("YOU DIED...", round(window.get_width()/2)-110, (window.get_height()/2)-150)
-            text("GAME OVER", round(window.get_width()/2)-110, (window.get_height()/2)-70)
-
-            if playButton.draw():
-                game_variables.gameOver = False
-                init_game()
-
-            if quitButton.draw():
-                pygame.quit()
-                sys.exit()
-
-        if game_variables.gamePause:
-            if not game_variables.gameOver:
-                window.blit(menu_bg, (0, 0))
-                text("PAUSE MENU", round(window.get_width()/2)-130, (window.get_height()/2)-200)
-
-                if playButton.draw():
-                    game_variables.gamePause = False
-
-                if quitButton.draw():
-                    pygame.quit()
-                    sys.exit()
+        main_menu(game_variables, playButton, quitButton)
+        end_menu(game_variables, playButton, quitButton)
+        pause_menu(game_variables, playButton, quitButton)
 
         if game_variables.gameStart and not game_variables.gamePause:
-
             change_cursor()
 
             if player.lives <= 0:
@@ -517,27 +492,13 @@ def main():
                 game_variables.scroll = 0
 
             if len(game_variables.alienList) == 0:
-                game_variables.lvl += 1
-                game_variables.NUM_ALIENS += 1
-                game_variables.NUM_BLUE_ALIENS += 1
-
-                if game_variables.lvl > 2:
-                    game_variables.NUM_SHOOTING_ALIENS += 2
-                    if game_variables.NUM_SHOOTING_ALIENS > 6:
-                        game_variables.NUM_SHOOTING_ALIENS = 3
-
-                if game_variables.lvl > 4:
-                    game_variables.NUM_BIG_ALIENS += 1
-                    if game_variables.NUM_BIG_ALIENS > 5:
-                        game_variables.NUM_BIG_ALIENS = 0
+                change_level(game_variables)
 
                 add_alien(Alien, game_variables.NUM_ALIENS, game_variables.alienList)
-
                 add_alien(BlueAlien, game_variables.NUM_BLUE_ALIENS, game_variables.blue_alienList)
 
                 if game_variables.lvl > 4:
                     add_alien(BigAlien, game_variables.NUM_BIG_ALIENS, game_variables.big_alienList)
-
                 if game_variables.lvl > 2:
                     add_alien(ShootAlien, game_variables.NUM_SHOOTING_ALIENS, game_variables.shoot_alienList)
 
@@ -558,9 +519,9 @@ def main():
                 if len(game_variables.rockList) < 3:
                     add_rocks(random.randint(6, 8), Rock, game_variables.rockList, 2, 6)
 
-            player.update()
-            player.show()
+            player.update(game_variables.pwr)
             player.move(game_variables.moveR, game_variables.moveL, game_variables.moveU, game_variables.moveD)
+            player.show()
 
             if player.lives <= 6 and player.lives > 0:
                 if game_variables.shoot:
@@ -618,9 +579,7 @@ def main():
             health.show()
             clock.tick()
             
-            text(f"FPS: {int(clock.get_fps())}", 75, 20, small=True)
-            text(f"ALIENS KILLED: {game_variables.aliensKilled}", window.get_width()-220, window.get_height()-50, small=True)
-            text(f"LEVEL: {game_variables.lvl}", 50, window.get_height()-50, small=True)
+            ui(clock, player, game_variables)
 
         else:
             show_cursor()
@@ -646,8 +605,11 @@ def main():
                     game_variables.moveU = True
                 if event.key == K_DOWN or event.key == K_s:
                     game_variables.moveD = True
+                if event.key == K_SPACE:
+                    game_variables.pwr = True
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                #shoot_sound.play()
                 game_variables.shoot = True
 
             if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
@@ -662,6 +624,8 @@ def main():
                     game_variables.moveU = False
                 if event.key == K_DOWN or event.key == K_s:
                     game_variables.moveD = False
+                if event.key == K_SPACE:
+                    game_variables.pwr = False
 
         if not game_variables.gamePause and not game_variables.gameOver and game_variables.gameStart:
             change_cursor()
