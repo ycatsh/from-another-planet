@@ -1,24 +1,33 @@
-## From Another Planet
-Your space ship is lost in an unidentified area far away from your home planet. Finish the objective and fight your way through to reach home safely (under development)
+![Logo](https://github.com/ycatsh/from-another-planet/assets/91330011/0fcb91c0-8da0-461f-bd50-641e76b9211c) 
 
-Kill the incoming enemies to advance levels, the speed of the laser and frequency of aliens (different type of aliens too) increase as levels are completed. When the enemies reach the other end of the screen, player loses a life. Moreover, the rocks and red laser instantly kill the player on contact
+From Another Planet is written in [python](https://www.python.org/) using the [pygame](https://www.pygame.org/news) library. It features intense fast-placed gameplay with a bunch of power-ups. Player is lost in an unidentified area far away from your home planet. Finish the objective and fight your way through to reach home safely.
 
+## Latest Updates
+**Player Teleportation:** The player will receive a power-up to teleport to the mouse pointer's location.  
+**In-between rock collisions:** When two or more rocks collide with each other they collectively all blow up.
 
-### How to play 
-Head to releases and download the latest version 
+## How to play 
+**WASD** to move / **MB1** to shoot / **SPACE** to teleport 
 
+Kill the incoming enemies to advance levels, the speed of the laser and frequency of aliens (different type of aliens too) increase as levels are completed. When the enemies [reach the other end](https://www.youtube.com/watch?v=n_L3mn7uweg) of the screen, player loses a life. The rocks and laser [instantly kill](https://www.youtube.com/watch?v=n_L3mn7uweg&t=1m17s) the player on contact.    
 
-### Source code 
-Download the repo and the required dependencies from `requirements.txt` then run the python file.
-
-
-### Gameplay
-https://user-images.githubusercontent.com/91330011/236515937-7e5ba6fa-239f-42ea-abd8-0829e1bcf2c7.mp4
+Occasionally the player will receive a power-up to [teleport](https://www.youtube.com/watch?v=n_L3mn7uweg&t=18) to game crosshair. Rocks can collide with each other or the player can shoot at the rocks at least 5 times to [blow them up](https://www.youtube.com/watch?v=n_L3mn7uweg&t=54).
 
 
-### Screenshots 
+## Download
+You can do any one of the following to run the game. Downloading from releases is recommended 
 
-![image](https://user-images.githubusercontent.com/91330011/236516208-b3ee44f0-03bb-45ac-b6bf-74ccecc71e9e.png)
-![image](https://user-images.githubusercontent.com/91330011/236516451-ff30aa6f-1b3b-401b-82dc-1bd581d88ce6.png)
-![image](https://user-images.githubusercontent.com/91330011/236516619-30dfe467-e64f-4fba-8a1c-6deeb88adac5.png)
-![image](https://user-images.githubusercontent.com/91330011/236516565-3c349442-ab61-49b9-8d41-c641fa63dd7d.png)
+### Release
+Head to [releases](https://github.com/ycatsh/from-another-planet/releases) and download the latest version. After downloading and extracting the zip file run `game.exe`
+
+### Source Code 
+Download the repository and the required dependencies from `requirements.txt` then run the python file. Otherwise, you can also create your own build using the source code:
+1. Install [`pyinstaller`](https://pypi.org/project/pyinstaller/) from pip 
+2. In the project directory run `pyinstaller game.py --onefile --noconsole`
+3. delete `build/` and create a new folder for the game
+4. Drag the `assets/` folder and `game.exe` from `dist/` into the new folder 
+5. Run the executable  
+  
+  
+## Gameplay Video
+https://github.com/ycatsh/from-another-planet/assets/91330011/92122f19-cc9d-4051-99ea-499dd7a285f1
