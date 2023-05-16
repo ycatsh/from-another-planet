@@ -15,13 +15,11 @@ Occasionally the player will receive a power-up to [teleport](https://www.youtub
 
 
 ## Download
-You can do any one of the following to run the game. Downloading from releases is recommended 
+You can do any one of the following to run the game. Downloading from releases is recommended.  
 
-### Release
-Head to [releases](https://github.com/ycatsh/from-another-planet/releases) and download the latest version. After downloading and extracting the zip file run `game.exe`
+Head to [releases](https://github.com/ycatsh/from-another-planet/releases) and download the latest version. After downloading and extracting the zip file run `game.exe`   
 
-### Source Code 
-Download the repository and the required dependencies from `requirements.txt` then run the python file. Otherwise, you can also create your own build using the source code:
+Otherwise, To run or build with the source code: download the repository and the required dependencies from `requirements.txt` then run the python file. You can also create your own build using the source code:
 1. Install [`pyinstaller`](https://pypi.org/project/pyinstaller/) from pip 
 2. In the project directory run `pyinstaller game.py --onefile --noconsole`
 3. delete `build/` and create a new folder for the game
