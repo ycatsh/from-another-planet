@@ -6,11 +6,11 @@ from assets import window, start_bg, over_bg, menu_bg
 
 def ui(clock, player, game_variables):
     text(f"FPS: {int(clock.get_fps())}", 75, 20, small=True)
-    if player.charge == "ACTIVATED":
-        text(f"<SPACE> TO TELEPORT", (window.get_width()/2)-50, 20, small=True)
+    text(f"<SPACE> TO TELEPORT", (window.get_width()/2)-50, 20, small=True) if player.charge == "ACTIVATED" else 0
     text(f"CHARGE: {player.charge}", window.get_width()-300, 20, small=True)
     text(f"ALIENS KILLED: {game_variables.aliensKilled}", window.get_width()-220, window.get_height()-50, small=True)
     text(f"LEVEL: {game_variables.lvl}", 50, window.get_height()-50, small=True)
+
 
 def main_menu(game_variables, play_button, quit_button):
     if not game_variables.gameStart:
