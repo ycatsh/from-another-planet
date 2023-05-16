@@ -121,19 +121,15 @@ class Player:
 
         if moveR:
             x = self.speed
-            y = 0
-
+            
         if moveL:
             x = -self.speed
-            y = 0
 
         if moveU:
             y = -self.speed
-            x = 0
 
         if moveD:
             y = self.speed
-            x = 0
 
         if self.rect.bottom + y > window.get_height()-81:
             y = window.get_height()-81 - self.rect.bottom
