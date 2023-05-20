@@ -1,4 +1,8 @@
-![Logo](https://github.com/ycatsh/from-another-planet/assets/91330011/0fcb91c0-8da0-461f-bd50-641e76b9211c) 
+![Logo](https://github.com/ycatsh/from-another-planet/assets/91330011/0fcb91c0-8da0-461f-bd50-641e76b9211c)   
+<br>
+![releases](https://img.shields.io/github/v/release/ycatsh/from-another-planet?logo=Github)
+![downloads](https://img.shields.io/github/downloads/ycatsh/from-another-planet/total?logo=Github)
+![commits](https://img.shields.io/github/commits-since/ycatsh/from-another-planet/latest?logo=Github)
 
 From Another Planet is written in [python](https://www.python.org/) using the [pygame](https://www.pygame.org/news) library. It features intense fast-placed gameplay with a bunch of power-ups. Player is lost in an unidentified area far away from your home planet. Finish the objective and fight your way through to reach home safely.
 
