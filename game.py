@@ -62,6 +62,7 @@ class GameVariables:
         self.laserList = []
         self.rockList = []
         self.bulletList = []
+        self.shellList = []
 
         self.gamePause = False
         self.gameOver = False
@@ -72,6 +73,7 @@ class GameVariables:
         self.moveU = False
         self.moveD = False
         self.shoot = False
+        self.shotg = False
         self.pwr = False
 
 
@@ -85,10 +87,18 @@ class Player:
         self.rect.center = (x, y)
         self.speed = speed
         self.rate = 0
+        self.srate = 0
+        self.gun = False
 
     def update(self, pwr):
         if self.rate > 0:
             self.rate -= 1
+
+        if self.srate > 0:
+            self.srate -= 1
+
+        if game_variables.aliensKilled > 30:
+            self.gun = True
 
         mXY = pygame.mouse.get_pos()
 
@@ -190,7 +200,6 @@ class AlienBullet:
         self.image = a_b
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
-        self.speed = 6
         self.dx = dx
         self.dy = dy
 
@@ -205,7 +214,13 @@ class AlienBullet:
 
     def show(self):
         window.blit(self.image, (self.rect.x, self.rect.y))
-                
+
+
+class Shell(Bullet):
+    def __init__(self, x, y, dx, dy, angle):
+        super().__init__(x, y, dx, dy)
+        self.angle = angle
+      
 
 class Alien:
     def __init__(self, x, y):
@@ -331,7 +346,7 @@ class ShootAlien:
             if self.chance == 2:
                 self.rect.x -= self.speed
                 if self.rect.x < window.get_width():
-                    shoot(AlienBullet, player, self, game_variables.alien_bulletList, enemy=True)
+                    shoot(AlienBullet, player, self, game_variables.alien_bulletList, bullet_type='enemy')
                     bullet_check(game_variables.alien_bulletList)
 
     def update(self):
@@ -375,7 +390,7 @@ class Laser:
         self.speedx += game_variables.lvl/8
         self.speedy += game_variables.lvl/12
 
-        if self.speedx > 6 or self.speedy > 6:
+        if self.speedx > 8 or self.speedy > 8:
             if slowdown == 1:
                 self.speedx = 3
                 self.speedy = 3
@@ -520,13 +535,17 @@ def main():
             player.show()
 
             if player.lives <= 6 and player.lives > 0:
-                if game_variables.shoot:
-                    shoot(Bullet, player, "", game_variables.bulletList, enemy=False) #alien param here doesn't matter
-                    bullet_check(game_variables.bulletList)
+                bullet_check(game_variables.bulletList)
 
-            for bullet in game_variables.bulletList:
-                bullet.update()
-                bullet.show()
+                if game_variables.shoot:
+                    shoot(Bullet, player, "", game_variables.bulletList, bullet_type='bullet') #alien param here doesn't matter
+
+                if game_variables.shotg:
+                    shoot(Shell, player, "", game_variables.bulletList, bullet_type='shotgun')
+
+            for bullets in game_variables.bulletList:
+                    bullets.update()
+                    bullets.show()
 
             for alien in game_variables.alienList:
                 alien.show()
@@ -602,14 +621,20 @@ def main():
                 if event.key == K_DOWN or event.key == K_s:
                     game_variables.moveD = True
                 if event.key == K_SPACE:
-                    game_variables.pwr = True
+                    game_variables.pwr = True   
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 #shoot_sound.play()
                 game_variables.shoot = True
 
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
+                game_variables.shotg = True
+
             if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 game_variables.shoot = False
+
+            if event.type == pygame.MOUSEBUTTONUP and event.button == 3:
+                game_variables.shotg = False
 
             if event.type == KEYUP:
                 if event.key == K_RIGHT or event.key == K_d:
