@@ -12,11 +12,11 @@ From Another Planet is written in [python](https://www.python.org/) using the [p
 **In-between rock collisions:** When two or more rocks collide with each other they collectively all blow up.
 
 ## How to play 
-**WASD** to move / **MB1** to shoot / **SPACE** to teleport 
+**WASD** to move / **MB1** to shoot / **MB2** for shotgun / **SPACE** to teleport
 
 Kill the incoming enemies to advance levels, the speed of the laser and frequency of aliens (different type of aliens too) increase as levels are completed. When the enemies [reach the other end](https://www.youtube.com/watch?v=n_L3mn7uweg) of the screen, player loses a life. The rocks and laser [instantly kill](https://www.youtube.com/watch?v=n_L3mn7uweg&t=1m17s) the player on contact.    
 
-Occasionally the player will receive a power-up to [teleport](https://www.youtube.com/watch?v=n_L3mn7uweg&t=18) to game crosshair. Rocks can collide with each other or the player can shoot at the rocks at least 5 times to [blow them up](https://www.youtube.com/watch?v=n_L3mn7uweg&t=54).
+Occasionally the player will receive a power-up to [teleport](https://www.youtube.com/watch?v=n_L3mn7uweg&t=18) to game crosshair and upon getting 30 kills the player can use a shotgun which has a cooldown of 300 ticks. Rocks can collide with each other or the player can shoot at the rocks at least 5 times to [blow them up](https://www.youtube.com/watch?v=n_L3mn7uweg&t=54).
 
 
 ## Download
