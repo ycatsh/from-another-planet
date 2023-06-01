@@ -75,8 +75,9 @@ def bullet_check(bullet_list):
         bullet_list[:] = [bullet for bullet in bullet_list if bullet.rect.x >= 0 and bullet.rect.x <= window.get_width() and bullet.rect.y >= 60 and bullet.rect.y <= window.get_height()-60]
 
 
-def shoot(bullet_class, player, alien, bullet_list, enemy=False):
-    if enemy:   
+def shoot(bullet_class, player, alien, bullet_list, bullet_type='bullet'):
+    
+    if bullet_type == 'enemy': 
         freq = random.randint(50, 100)
         pX, pY = player.rect.x, player.rect.y
 
@@ -89,7 +90,8 @@ def shoot(bullet_class, player, alien, bullet_list, enemy=False):
         if alien.rate == 0:
             alien.rate = freq
             bullet_list.append(bullet_class(alien.rect.centerx, alien.rect.centery, speedX, speedY))
-    else:
+
+    elif bullet_type == 'bullet':
         sX, sY = pygame.mouse.get_pos()
 
         distanceX = sX - player.rect.x
@@ -104,3 +106,25 @@ def shoot(bullet_class, player, alien, bullet_list, enemy=False):
             bullet = bullet_class(player.rect.centerx, player.rect.centery, speedX, speedY)
             bullet.rotate(angle)
             bullet_list.append(bullet)
+
+    elif bullet_type == 'shotgun':
+        sX, sY = pygame.mouse.get_pos()
+
+        distanceX = sX - player.rect.x
+        distanceY = sY - player.rect.y
+        angle = math.atan2(distanceY, distanceX) + ((7/12)*math.pi/2)
+
+
+        if player.gun:
+            if player.srate == 0:
+                player.srate = 300
+
+                for _ in range(7):
+                    speedX = int(14 * math.cos(angle))
+                    speedY = int(14 * math.sin(angle))
+
+                    shell = bullet_class(player.rect.centerx, player.rect.centery, speedX, speedY, angle)
+                    shell.rotate(angle)
+                    angle -= 0.3
+
+                    bullet_list.append(shell)
