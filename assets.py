@@ -10,7 +10,7 @@ windowSize = 1920,1080
 window = pygame.display.set_mode((windowSize), pygame.FULLSCREEN|SCALED, vsync=1)
 
 # icons
-icon = pygame.image.load('assets/icon.png').convert_alpha()
+icon = pygame.image.load('assets/menus/icon.png').convert_alpha()
 pygame.display.set_caption("From Another Planet")
 pygame.display.set_icon(icon)
 
@@ -25,16 +25,21 @@ color = (110, 69, 206)
 
 
 # cursor
-cursor = pygame.image.load('assets/cursor.png').convert_alpha()
-crosshair = pygame.image.load('assets/crosshair.png').convert_alpha()
-tp_cursor = pygame.image.load('assets/tp_cursor.png').convert_alpha()
+cursor = pygame.image.load('assets/cursors/cursor.png').convert_alpha()
+crosshair = pygame.image.load('assets/cursors/crosshair.png').convert_alpha()
+tp_cursor = pygame.image.load('assets/cursors/tp_cursor.png').convert_alpha()
 
 
-# backgrounds
-bg = pygame.image.load('assets/bg.png').convert_alpha()
-start_bg = pygame.image.load('assets/start_bg.png').convert_alpha()
-menu_bg = pygame.image.load('assets/menu_bg.png').convert_alpha()
-over_bg = pygame.image.load('assets/over_bg.png').convert_alpha()
+# backgrounds/menus
+bg = pygame.image.load('assets/menus/bg.png').convert_alpha()
+menu_bg = pygame.image.load('assets/menus/menu_bg.png').convert_alpha()
+comet = pygame.image.load('assets/menus/comet.png').convert_alpha()
+
+
+#logos 
+logo = pygame.image.load('assets/logos/logo.png').convert_alpha()
+pause_logo = pygame.image.load('assets/logos/paused.png').convert_alpha()
+over_logo = pygame.image.load('assets/logos/ended.png').convert_alpha()
 
 
 # player and enemy
@@ -56,8 +61,15 @@ rockRandom = [pygame.image.load(f'assets/rocks/r{i}.png').convert_alpha() for i 
 
 
 #buttons
-bP = pygame.image.load('assets/resume_button.png').convert_alpha()
-bQ = pygame.image.load('assets/quit_button.png').convert_alpha()
+bQ = pygame.image.load('assets/buttons/quit.png').convert_alpha()
+bT = pygame.image.load('assets/buttons/tuto.png').convert_alpha()
+bN = pygame.image.load('assets/buttons/newg.png').convert_alpha()
+bR = pygame.image.load('assets/buttons/resu.png').convert_alpha()
+
+bQc = pygame.image.load('assets/buttons/quit-clicked.png').convert_alpha()
+bTc = pygame.image.load('assets/buttons/tuto-clicked.png').convert_alpha()
+bNc = pygame.image.load('assets/buttons/newg-clicked.png').convert_alpha()
+bRc = pygame.image.load('assets/buttons/resu-clicked.png').convert_alpha()
 
 
 #lives
