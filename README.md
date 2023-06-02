@@ -16,8 +16,8 @@ From Another Planet is written in [python](https://www.python.org/) using the [p
 <br>
 
 ## Latest Updates
-**Player Teleportation:** The player will receive a power-up to teleport to the mouse pointer's location.  
-**In-between rock collisions:** When two or more rocks collide with each other they collectively all blow up.
+**New Weapon - Shotgun:** a weapon unlocked at 30 kills that fires multiple bullets in an arc.  
+**Improved Menus and Enhanced Art:** Revamped menus with enhanced artwork and animations.
 
 <br>
 
@@ -36,5 +36,11 @@ Head to [releases](https://github.com/ycatsh/from-another-planet/releases) and d
   
 <br>
 
-## Video
-https://github.com/ycatsh/from-another-planet/assets/91330011/92122f19-cc9d-4051-99ea-499dd7a285f1
+## Screenshots
+![image](https://github.com/ycatsh/from-another-planet/assets/91330011/1a2fdc92-9a2e-430b-bcf1-b31d5f8d04ae)
+![image](https://github.com/ycatsh/from-another-planet/assets/91330011/d11b3acb-b165-4ad1-b141-e707b0ecbf6b)
+![image](https://github.com/ycatsh/from-another-planet/assets/91330011/e36b6e86-3568-40e1-ba9a-1c5c0cf8e534)
+![image](https://github.com/ycatsh/from-another-planet/assets/91330011/64274693-43e7-4565-80c7-dc109b072d78)
+![image](https://github.com/ycatsh/from-another-planet/assets/91330011/35bd3b8a-f77f-45e4-b308-91469a97ab00)
+
+
