@@ -7,9 +7,9 @@ From Another Planet is written in [python](https://www.python.org/) using the [p
 
 <div align="center">
 
-![releases](https://img.shields.io/github/v/release/ycatsh/from-another-planet?style=for-the-badge)
-![downloads](https://img.shields.io/github/downloads/ycatsh/from-another-planet/total?style=for-the-badge)
-![commits](https://img.shields.io/github/commits-since/ycatsh/from-another-planet/latest?style=for-the-badge)
+![releases](https://img.shields.io/github/v/release/ycatsh/from-another-planet?color=522daa&labelColor=1d1e1f&style=for-the-badge)
+![downloads](https://img.shields.io/github/downloads/ycatsh/from-another-planet/total?color=522daa&labelColor=1d1e1f&style=for-the-badge)
+![commits](https://img.shields.io/github/commits-since/ycatsh/from-another-planet/latest?color=522daa&labelColor=1d1e1f&style=for-the-badge)
 
 </div>
 
@@ -36,5 +36,5 @@ Head to [releases](https://github.com/ycatsh/from-another-planet/releases) and d
   
 <br>
 
-## Gameplay Video
+## Video
 https://github.com/ycatsh/from-another-planet/assets/91330011/92122f19-cc9d-4051-99ea-499dd7a285f1
