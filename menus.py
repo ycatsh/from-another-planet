@@ -1,8 +1,11 @@
+from assets import window, menu_bg, logo, pause_logo
+from animate import Comet
+from game import text
+import random
 import pygame
 import sys
-from game import text, init_game
-from assets import window, start_bg, over_bg, menu_bg
 
+cometList = [Comet(random.randint(1500, 5000), -random.randint(10, 10000), random.randint(1, 4)) for _ in range(6)]
 
 def ui(clock, player, game_variables):
     text(f"FPS: {int(clock.get_fps())}", 75, 20, small=True)
@@ -13,39 +16,33 @@ def ui(clock, player, game_variables):
     text(f"LEVEL: {game_variables.lvl}", 50, window.get_height()-50, small=True)
 
 
-def main_menu(game_variables, play_button, quit_button):
-    if not game_variables.gameStart:
-        window.blit(start_bg, (0, 0))
+def main_menu(game_variables, play_button, tuto_button, quit_button):
+    window.blit(menu_bg, (0, 0))
 
-        if play_button.draw():
-            game_variables.gameStart = True
-        if quit_button.draw():
-            pygame.quit()
-            sys.exit()
+    for comet in cometList:
+        comet.update()
+        comet.show()
+        comet.move()
 
+    window.blit(logo, ((window.get_width()/2)-290, (window.get_height()/2)-400))
 
-def end_menu(game_variables, play_button, quit_button):
-    if game_variables.gameOver:
-        window.blit(over_bg, (0, 0))
-        text("YOU DIED", round(window.get_width()/2)-85, (window.get_height()/2)-150)
-        text("GAME OVER", round(window.get_width()/2)-110, (window.get_height()/2)-70)
-
-        if play_button.draw():
-            init_game()
-            game_variables.gameStart = True
-        if quit_button.draw():
-            pygame.quit()
-            sys.exit()
+    if play_button.pressed():
+        game_variables.gameStart = True
+    if tuto_button.pressed():
+        pass
+    if quit_button.pressed():
+        pygame.quit()
+        sys.exit()
 
 
-def pause_menu(game_variables, play_button, quit_button):
-    if game_variables.gamePause:
-        if not game_variables.gameOver:
-            window.blit(menu_bg, (0, 0))
-            text("PAUSE MENU", round(window.get_width()/2)-130, (window.get_height()/2)-200)
+def pause_menu(game_variables, play_button, tuto_button, quit_button):
+    window.blit(menu_bg, (0, 0))
+    window.blit(pause_logo, ((window.get_width()/2)-290, (window.get_height()/2)-300))
 
-            if play_button.draw():
-                game_variables.gamePause = False
-            if quit_button.draw():
-                pygame.quit()
-                sys.exit()
+    if play_button.pressed():
+        game_variables.gamePause = False
+    if tuto_button.pressed():
+        pass
+    if quit_button.pressed():
+        pygame.quit()
+        sys.exit()
