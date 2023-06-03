@@ -491,6 +491,7 @@ def main():
         if game_variables.gameOver:
             window.blit(menu_bg, (0, 0))
             window.blit(over_logo, ((window.get_width()/2)-300, (window.get_height()/2)-400))
+            text(f"Score: {game_variables.aliensKilled}", (window.get_width()/2)-45, (window.get_height()/2)-70, small=True)
 
             if buttons[0].pressed(): #reset game
                 game_variables = GameVariables()
