@@ -361,11 +361,11 @@ class Laser:
         self.directiony = random.choice([1, -1])
 
     def update(self):
-        slowdown = random.randint(1, 2)
+        slowdown = random.randint(1, 3)
         self.speedx += game_variables.lvl/8
         self.speedy += game_variables.lvl/12
 
-        if self.speedx > 8 or self.speedy > 8:
+        if self.speedx > 10 or self.speedy > 10:
             if slowdown == 1:
                 self.speedx = 3
                 self.speedy = 3
