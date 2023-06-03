@@ -485,7 +485,7 @@ def main():
 
     while True:
 
-        if not game_variables.gameOver:
+        if not game_variables.gameOver and not game_variables.gameStart:
             main_menu(game_variables, buttons[0], buttons[1], buttons[2])
 
         if game_variables.gameOver:
