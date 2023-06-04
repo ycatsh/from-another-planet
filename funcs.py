@@ -49,9 +49,9 @@ def change_level(game_variables):
             game_variables.NUM_SHOOTING_ALIENS = 3
 
     if game_variables.lvl > 4:
-        game_variables.NUM_BIG_ALIENS += 1
-        if game_variables.NUM_BIG_ALIENS > 5:
-            game_variables.NUM_BIG_ALIENS = 0
+        game_variables.NUM_BIG_ALIENS += 2
+        if game_variables.NUM_BIG_ALIENS > 6:
+            game_variables.NUM_BIG_ALIENS = 2
 
 
 def add_alien(alien_type, num, alien_list):
