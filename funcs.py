@@ -78,7 +78,7 @@ def bullet_check(bullet_list):
 def shoot(bullet_class, player, alien, bullet_list, bullet_type='bullet'):
     
     if bullet_type == 'enemy': 
-        freq = random.randint(50, 100)
+        freq = random.randint(15, 40)
         pX, pY = player.rect.x, player.rect.y
 
         distanceX = pX - alien.rect.x
