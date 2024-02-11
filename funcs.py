@@ -1,8 +1,10 @@
-import pygame
-from pygame.locals import *
-from assets import *
 import random
 import math
+
+import pygame
+from pygame.locals import *
+
+from assets import *
 
 
 def text(content, x, y, font=font, sm_font=sm_font, color=color, small=False):

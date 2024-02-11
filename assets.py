@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 
+
 pygame.mixer.pre_init(44100, -16, 2, 512)
 pygame.init()
 pygame.mixer.set_num_channels(64)
