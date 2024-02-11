@@ -1,6 +1,9 @@
-from assets import window, comet
 import random
+
 import pygame
+
+from assets import window, comet
+
 
 class Comet:
     def __init__(self, x, y, speed):

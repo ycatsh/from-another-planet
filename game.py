@@ -1,11 +1,12 @@
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
-
-import pygame
 import sys
 import random
 import math
+
+import pygame
 from pygame.locals import *
+
 from funcs import *
 from assets import *
 from buttons import *

@@ -1,9 +1,14 @@
-from assets import window, menu_bg, logo, pause_logo
+import sys
+import random
+
+import pygame
+
+from assets import(
+    window, menu_bg, logo, pause_logo
+)
 from animate import Comet
 from game import text
-import random
-import pygame
-import sys
+
 
 cometList = [Comet(random.randint(1500, 5000), -random.randint(10, 10000), random.randint(1, 4)) for _ in range(6)]
 
