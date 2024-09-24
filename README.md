@@ -9,7 +9,7 @@ From Another Planet is written in [python](https://www.python.org/) using the [p
 
 ![releases](https://img.shields.io/github/v/release/ycatsh/from-another-planet?color=522daa&labelColor=1d1e1f&style=for-the-badge)
 ![downloads](https://img.shields.io/github/downloads/ycatsh/from-another-planet/total?color=522daa&labelColor=1d1e1f&style=for-the-badge)
-![commits](https://img.shields.io/github/commits-since/ycatsh/from-another-planet/latest?color=522daa&labelColor=1d1e1f&style=for-the-badge)
+![issues](https://img.shields.io/github/issues/ycatsh/from-another-planet?color=522daa&labelColor=1d1e1f&style=for-the-badge)
 
 </div>
 
