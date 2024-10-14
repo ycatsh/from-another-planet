@@ -16,10 +16,10 @@ From Another Planet is written in [python](https://www.python.org/) using the [p
 <br>
 
 ## Latest Updates
-**Improved Animations:** Added animation for teleport and improved asteroid explosion effect
+**Improved Animations:** Added animation for teleport and improved asteroid explosion effect  
 **Sound Effects:** Added a bunch of sound effects to the game  
   
-### Previous Updates
+#### Previous Updates
 **New Weapon - Shotgun:** a weapon unlocked at 30 kills that fires multiple bullets in an arc.  
 **Improved Menus and Enhanced Art:** Revamped menus with enhanced artwork and animations.
 
