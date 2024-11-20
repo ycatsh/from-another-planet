@@ -40,6 +40,11 @@ Head to [releases](https://github.com/ycatsh/from-another-planet/releases) and d
   
 <br>
 
+## License
+This game is distributed under CC BY-NC 4.0 License, which can be found in ``LICENSE``. I reserve the right to place future versions under a different license.
+  
+<br>
+
 ## Screenshots
 ![image](https://github.com/ycatsh/from-another-planet/assets/91330011/1a2fdc92-9a2e-430b-bcf1-b31d5f8d04ae)
 ![image](https://github.com/ycatsh/from-another-planet/assets/91330011/d11b3acb-b165-4ad1-b141-e707b0ecbf6b)
