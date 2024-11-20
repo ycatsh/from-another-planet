@@ -19,18 +19,16 @@ class Player:
         self.velocity_x = 0
         self.velocity_y = 0
         self.acceleration = 0.5
-        self.rate = 0
         self.srate = 0
         self.gun = False
         self.next_teleport = 10
         self.friction = 0.96
+        self.mass = 5
 
-    def update(self, telep, vars):
-        if self.rate > 0:
-            self.rate -= 1
+    def update(self, telep, game_vars):
         if self.srate > 0:
             self.srate -= 1
-        if vars.aliensKilled >= 30:
+        if game_vars.aliensKilled >= 30:
             self.gun = True
 
         mXY = pygame.mouse.get_pos()
@@ -38,29 +36,29 @@ class Player:
         self.rotated_image = pygame.transform.rotate(self.image, -angle)
         self.rect = self.rotated_image.get_rect(center=self.rect.center)
 
-        if vars.aliensKilled > 0:
-            if vars.aliensKilled >= self.next_teleport:
+        if game_vars.aliensKilled > 0:
+            if game_vars.aliensKilled >= self.next_teleport:
                 self.charge = "ACTIVATED"
                 hide_cursor()
                 teleport_cursor()
                 if telep:
-                    self.next_teleport = vars.aliensKilled + 10
+                    self.next_teleport = game_vars.aliensKilled + 10
                     self.rect.x = mXY[0]
                     self.rect.y = mXY[1]
                     teleport_channel.play(teleport_sound)
-                    for _ in range(vars.NUM_TELEPORT_PARTICLES):
-                        vars.teleportParticles.append(TeleportAnimation(self, vars.NUM_TELEPORT_PARTICLES))
+                    for _ in range(game_vars.NUM_TELEPORT_PARTICLES):
+                        game_vars.teleportParticles.append(TeleportAnimation(self, game_vars.NUM_TELEPORT_PARTICLES))
             else:
                 self.charge = "NOT ACTIVATED"
 
-    def collide(self, vars, laser):
-        for _ in pygame.sprite.spritecollide(self, vars.rockList, False):
+    def collide(self, game_vars, laser):
+        for _ in pygame.sprite.spritecollide(self, game_vars.rockList, False):
             self.lives = 0
-            vars.cause_of_death = "Killed by asteroid"
+            game_vars.cause_of_death = "Killed by asteroid"
 
         if pygame.Rect.colliderect(self.rect, laser.rect):
             self.lives = 0
-            vars.cause_of_death = "Killed by Laser"
+            game_vars.cause_of_death = "Killed by Laser"
 
     def move(self, window, moveR, moveL, moveU, moveD):
         x_acceleration = 0

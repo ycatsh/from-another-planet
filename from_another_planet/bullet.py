@@ -33,15 +33,15 @@ class AlienBullet:
         self.dx = dx
         self.dy = dy
 
-    def update(self, player, vars):
+    def update(self, player, game_vars):
         self.rect.x += self.dx
         self.rect.y += self.dy
 
         if pygame.Rect.colliderect(self.rect, player.rect):
-            vars.alien_bulletList.remove(self)
+            game_vars.alien_bulletList.remove(self)
             player.lives -= 1
             if player.lives <= 0:
-                vars.cause_of_death = "Killed by alien shots"
+                game_vars.cause_of_death = "Killed by alien shots"
 
     def show(self, window):
         window.blit(self.image, (self.rect.x, self.rect.y))

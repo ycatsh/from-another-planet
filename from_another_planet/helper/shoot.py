@@ -33,13 +33,10 @@ def player_shoot(bullet_class, player, bullet_list, effects):
     angle = math.atan2(distanceY, distanceX)
     speedX = int(16 * math.cos(angle))
     speedY = int(16 * math.sin(angle))
-
-    if player.rate == 0:
-        player.rate = 10
-        bullet = bullet_class(b, player.rect.centerx, player.rect.centery, speedX, speedY)
-        bullet.rotate(angle)
-        bullet_list.append(bullet)
-        effects.recoil(angle)
+    bullet = bullet_class(b, player.rect.centerx, player.rect.centery, speedX, speedY)
+    bullet.rotate(angle)
+    bullet_list.append(bullet)
+    effects.recoil(angle)
 
 
 def player_shotgun(bullet_class, player, bullet_list, effects):
@@ -52,12 +49,12 @@ def player_shotgun(bullet_class, player, bullet_list, effects):
         if player.srate == 0:
             player.srate = 300
 
-            for _ in range(7):
-                speedX = int(14 * math.cos(angle))
-                speedY = int(14 * math.sin(angle))
+            for _ in range(14):
+                speedX = int(16 * math.cos(angle))
+                speedY = int(16 * math.sin(angle))
                 shell = bullet_class(b, player.rect.centerx, player.rect.centery, speedX, speedY, angle)
                 shell.rotate(angle)
-                angle -= 0.3
+                angle -= 0.2
                 bullet_list.append(shell)
                 shotgun_channel.play(shotgun_sound)
                 effects.recoil(angle, recoil_strength=5)
