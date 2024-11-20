@@ -38,33 +38,33 @@ def teleport_cursor():
     window.blit(tp_cursor, pos)
 
 
-def change_level(game_variables):
-    game_variables.lvl += 1
-    game_variables.NUM_ALIENS += 1
-    game_variables.NUM_BLUE_ALIENS += 1
+def change_level(game_vars):
+    game_vars.lvl += 1
+    game_vars.NUM_ALIENS += 1
+    game_vars.NUM_BLUE_ALIENS += 1
     
     MAX_SHOOTING_ALIENS_LVL_3 = 4
     MAX_SHOOTING_ALIENS_LVL_5 = 8
     MAX_BLUE_ALIENS = 5
     MAX_BIG_ALIENS = 10
 
-    if game_variables.lvl > 8:
-        game_variables.NUM_SHOOTING_ALIENS += 2
-        game_variables.NUM_BLUE_ALIENS += 2
-        game_variables.NUM_BIG_ALIENS += 2
-    elif game_variables.lvl > 3:
-        game_variables.NUM_SHOOTING_ALIENS += 1
+    if game_vars.lvl > 8:
+        game_vars.NUM_SHOOTING_ALIENS += 2
+        game_vars.NUM_BLUE_ALIENS += 2
+        game_vars.NUM_BIG_ALIENS += 2
+    elif game_vars.lvl > 3:
+        game_vars.NUM_SHOOTING_ALIENS += 1
 
-    if game_variables.lvl > 4 and game_variables.NUM_SHOOTING_ALIENS > MAX_SHOOTING_ALIENS_LVL_5:
-        game_variables.NUM_SHOOTING_ALIENS = MAX_SHOOTING_ALIENS_LVL_5
-    elif game_variables.lvl > 3 and game_variables.NUM_SHOOTING_ALIENS > MAX_SHOOTING_ALIENS_LVL_3:
-        game_variables.NUM_SHOOTING_ALIENS = MAX_SHOOTING_ALIENS_LVL_3
+    if game_vars.lvl > 4 and game_vars.NUM_SHOOTING_ALIENS > MAX_SHOOTING_ALIENS_LVL_5:
+        game_vars.NUM_SHOOTING_ALIENS = MAX_SHOOTING_ALIENS_LVL_5
+    elif game_vars.lvl > 3 and game_vars.NUM_SHOOTING_ALIENS > MAX_SHOOTING_ALIENS_LVL_3:
+        game_vars.NUM_SHOOTING_ALIENS = MAX_SHOOTING_ALIENS_LVL_3
 
-    if game_variables.lvl > 4 and game_variables.NUM_BLUE_ALIENS > MAX_BLUE_ALIENS:
-         game_variables.NUM_BLUE_ALIENS = MAX_BLUE_ALIENS
+    if game_vars.lvl > 4 and game_vars.NUM_BLUE_ALIENS > MAX_BLUE_ALIENS:
+         game_vars.NUM_BLUE_ALIENS = MAX_BLUE_ALIENS
     
-    if game_variables.lvl > 4 and game_variables.NUM_BIG_ALIENS > MAX_BIG_ALIENS:
-        game_variables.NUM_BIG_ALIENS = MAX_BIG_ALIENS
+    if game_vars.lvl > 4 and game_vars.NUM_BIG_ALIENS > MAX_BIG_ALIENS:
+        game_vars.NUM_BIG_ALIENS = MAX_BIG_ALIENS
 
 
 def reduce_life_edge(player, alien_type, alien_list):
@@ -76,16 +76,24 @@ def reduce_life_edge(player, alien_type, alien_list):
 
 def add_alien(alien_type, sprite, num, alien_list):
     for _ in range(num):
-        min_pos=(random.randint(window.get_width()+200, window.get_width()+400))
-        max_pos=(random.randint(100, window.get_height()-120))
-        alien = alien_type(sprite, min_pos, max_pos)
+        valid = False
+        while not valid:
+            x = (random.randint(window.get_width()+200, window.get_width()+400))
+            y = (random.randint(100, window.get_height()-120))
+            valid = True
+            for alien in alien_list:
+                if abs(x - alien.rect.x) < 50 and abs(y - alien.rect.y) < 50:
+                    valid = False
+                    break
+        alien = alien_type(sprite, x, y)
         alien_list.append(alien)
-
 
 def add_rocks(num, rock_class, sprites, rock_list, min_speed, max_speed):
     for _ in range(num):
-        x = random.choice([random.randint(-window.get_width()+200, -window.get_width()+800), random.randint(window.get_width()+200, window.get_width()+800)])
-        y = random.choice([random.randint(window.get_height()+200, window.get_height()+800), random.randint(-window.get_height()+200, -window.get_height()+800)])
+        x = random.choice([random.randint(-500, -100), 
+                           random.randint(window.get_width() + 100, window.get_width() + 500)])
+        y = random.choice([random.randint(window.get_height() + 100, window.get_height() + 500),
+                           random.randint(-500, -100)])
         rock = rock_class(sprites, x, y, random.randint(min_speed, max_speed))
         rock_list.append(rock)
 
@@ -97,7 +105,7 @@ def proximity_sound(player, item, channel, sound, proximity_range=500):
         vol = max(0.05, min(2.0, 2.0 - (player_distance / proximity_range)))
         channel.set_volume(vol)
         if not channel.get_busy():
-            channel.play(sound)
+            channel.play(sound, fade_ms=1000)
     else:
         if channel.get_busy():
             channel.fadeout(1000)

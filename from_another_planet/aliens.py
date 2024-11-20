@@ -14,34 +14,34 @@ class Alien(pygame.sprite.Sprite):
         self.rect.center = (x, y)
         self.speed = 2
 
-    def check_collisions(self, hit_list, alien_list, vars, is_bullet=False):
+    def check_collisions(self, hit_list, alien_list, game_vars, is_bullet=False):
         collisions = pygame.sprite.spritecollide(self, hit_list, False)
         remove = []
         for other in collisions:
             if is_bullet:
                 hit_list.remove(other)
                 remove.append(self)
-                vars.aliensKilled += 1
+                game_vars.aliensKilled += 1
             else:
                 remove.append(self)
         for alien in remove:
-            if alien in remove:
+            if alien in alien_list:
                 alien_list.remove(alien)
 
-    def check_player_collision(self, this_list, vars, player):
+    def check_player_collision(self, this_list, game_vars, player):
         if self.rect.colliderect(player.rect):
             this_list.remove(self)
             player.lives -= 1
             if player.lives <= 0:
-                vars.cause_of_death = "Hit by alien"
+                game_vars.cause_of_death = "Hit by alien"
 
     def move(self):
         self.rect.x -= self.speed
 
-    def update(self, player, vars):
-        self.check_collisions(vars.rockList, vars.alienList, vars, is_bullet=False)
-        self.check_collisions(vars.bulletList, vars.alienList, vars, is_bullet=True)
-        self.check_player_collision(vars.alienList, vars, player=player)
+    def update(self, player, game_vars):
+        self.check_collisions(game_vars.rockList, game_vars.alienList, game_vars, is_bullet=False)
+        self.check_collisions(game_vars.bulletList, game_vars.alienList, game_vars, is_bullet=True)
+        self.check_player_collision(game_vars.alienList, game_vars, player=player)
 
     def show(self, window, offset):
         window.blit(self.image, (self.rect.x + offset[0], self.rect.y + offset[1]))
@@ -55,10 +55,10 @@ class BlueAlien(Alien):
     def move(self):
         self.rect.x -= self.speed
 
-    def update(self, player, vars):
-        self.check_collisions(vars.rockList, vars.blue_alienList, vars, is_bullet=False)
-        self.check_collisions(vars.bulletList, vars.blue_alienList, vars, is_bullet=True)
-        self.check_player_collision(vars.blue_alienList, vars, player=player)
+    def update(self, player, game_vars):
+        self.check_collisions(game_vars.rockList, game_vars.blue_alienList, game_vars, is_bullet=False)
+        self.check_collisions(game_vars.bulletList, game_vars.blue_alienList, game_vars, is_bullet=True)
+        self.check_player_collision(game_vars.blue_alienList, game_vars, player=player)
 
     def show(self, window, offset):
         window.blit(self.image, (self.rect.x + offset[0], self.rect.y + offset[1]))
@@ -72,21 +72,21 @@ class BigAlien(Alien):
     def move(self):
         self.rect.x -= self.speed
 
-    def update(self, player, vars):
-        self.check_collisions(vars.rockList, vars.big_alienList, vars, is_bullet=False)
-        self.check_player_collision(vars.big_alienList, vars, player=player)
+    def update(self, player, game_vars):
+        self.check_collisions(game_vars.rockList, game_vars.big_alienList, game_vars, is_bullet=False)
+        self.check_player_collision(game_vars.big_alienList, game_vars, player=player)
 
-        collisions = pygame.sprite.spritecollide(self, vars.bulletList, False)
+        collisions = pygame.sprite.spritecollide(self, game_vars.bulletList, False)
         remove = []
         for bullet in collisions:
-            vars.bulletList.remove(bullet)
+            game_vars.bulletList.remove(bullet)
             self.lives -= 1
             if self.lives < 0:
-                vars.aliensKilled += 1
+                game_vars.aliensKilled += 1
                 remove.append(self)
         for big_alien in remove:
-            if big_alien in remove:
-                vars.big_alienList.remove(big_alien)
+            if big_alien in game_vars.big_alienList:
+                game_vars.big_alienList.remove(big_alien)
 
     def show(self, window, alien_big_sprite, offset):
         window.blit(alien_big_sprite[self.lives], (self.rect.x + offset[0], self.rect.y + offset[1]))
@@ -98,19 +98,19 @@ class ShootAlien(Alien):
         self.speed = 3
         self.rate = 0
 
-    def move(self, player, window, vars):
+    def move(self, player, window, game_vars):
         self.rect.x -= self.speed
         if self.rect.x < window.get_width():
-            alien_shoot(AlienBullet, player, self, vars.alien_bulletList)
-            bullet_check(vars.alien_bulletList, window)
+            alien_shoot(AlienBullet, player, self, game_vars.alien_bulletList)
+            bullet_check(game_vars.alien_bulletList, window)
 
-    def update(self, player, vars):
+    def update(self, player, game_vars):
         if self.rate > 0:
             self.rate -= 1
 
-        self.check_collisions(vars.rockList, vars.shoot_alienList, vars, is_bullet=False)
-        self.check_collisions(vars.bulletList, vars.shoot_alienList, vars, is_bullet=True)
-        self.check_player_collision(vars.shoot_alienList, vars, player=player)
+        self.check_collisions(game_vars.rockList, game_vars.shoot_alienList, game_vars, is_bullet=False)
+        self.check_collisions(game_vars.bulletList, game_vars.shoot_alienList, game_vars, is_bullet=True)
+        self.check_player_collision(game_vars.shoot_alienList, game_vars, player=player)
 
     def show(self, window, offset):
         window.blit(self.image, (self.rect.x + offset[0], self.rect.y + offset[1]))
