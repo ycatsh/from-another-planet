@@ -42,6 +42,18 @@ Head to [releases](https://github.com/ycatsh/from-another-planet/releases) and d
 
 ## License
 This game is distributed under CC BY-NC 4.0 License, which can be found in ``LICENSE``. I reserve the right to place future versions under a different license.
+
+<br>
+
+## Credit
+### Sound Assets
+Sound files are from [OpenGameArt](https://opengameart.org/). You can find the exact source of some of them below:
+- [gun shots](https://opengameart.org/content/gunloop-8bit) (CC0)
+- [shotgun shots](https://opengameart.org/content/chaingun-pistol-rifle-shotgun-shots) (CC-BY 3.0)
+- [laser](https://opengameart.org/content/seamless-energy-emission-loop) (CC0)
+
+### Fonts
+Find the font used [here](https://www.dafont.com/c-c-red-alert-inet.font) (its completely free).
   
 <br>
 
