@@ -9,7 +9,6 @@ from pygame.locals import *
 
 from from_another_planet import *
 from from_another_planet.player import *
-from from_another_planet.planet import *
 from from_another_planet.aliens import *
 from from_another_planet.laser import *
 from from_another_planet.rock import *
@@ -17,14 +16,14 @@ from from_another_planet.bullet import *
 from from_another_planet.helper.animate import *
 from from_another_planet.helper.effects import *
 from from_another_planet.helper.config import *
-from from_another_planet.views.buttons import *
-from from_another_planet.views.menus import *
+from from_another_planet.menus.buttons import *
+from from_another_planet.menus.menus import *
 from from_another_planet.helper.shoot import *
+
 
 clock = pygame.time.Clock()
 
-
-# game variables and constants
+# Game variables and constants
 class GameVariables:
     def __init__(self):
         self.NUM_ALIENS = 4  
