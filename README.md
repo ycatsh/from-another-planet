@@ -37,6 +37,41 @@ Occasionally the player will receive a power-up to teleport to game crosshair an
 ## Download
 
 Head to [releases](https://github.com/ycatsh/from-another-planet/releases) and download the latest version. After downloading and extracting the zip file run `game.exe`   
+
+<br>
+
+## Build from source
+
+```
+git clone https://github.com/ycatsh/from-another-planet.git
+cd from-another-planet
+```
+
+### Set up and activate the virtual environment
+
+Linux:
+```
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+Windows:
+```
+python -m venv .venv
+.venv\Scripts\activate.bat
+```
+
+### Download dependencies
+
+```
+pip install -r requirements.txt
+```
+
+### Play
+
+```
+python main.py
+``` 
   
 <br>
 
